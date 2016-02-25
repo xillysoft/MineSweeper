@@ -14,9 +14,34 @@
 
 @implementation ViewController
 
+- (void)layMinesButtonClicked:(UIButton *)sender
+{
+
+    
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    int rows;
+    int columns;
+    int numberOfMines;
+    if([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone){
+        rows = 9;
+        columns = 9;
+        numberOfMines = 16;
+    }else{
+        rows = 16;
+        columns = 16;
+        numberOfMines = 40;
+    }
+    MineBoard *mineBoard = [[MineBoard alloc] initWithRows:rows columns:columns];
+    [mineBoard layMines:numberOfMines];
+    
+    PlayerBoard *playerBoard = [[PlayerBoard alloc] initWithMineBoard:mineBoard];
+    [self.playerBoardView setPlayerBoard:playerBoard];
+    
+    [self.layMinesButton addTarget:self action:@selector(layMinesButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)didReceiveMemoryWarning {

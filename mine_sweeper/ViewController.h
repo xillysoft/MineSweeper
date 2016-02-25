@@ -7,8 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MineBoard.h"
+#import "PlayerBoard.h"
+#import "PlayerBoardView.h"
 
 @interface ViewController : UIViewController
+@property (weak, nonatomic) IBOutlet PlayerBoardView *playerBoardView;
+@property (weak, nonatomic) IBOutlet UIButton *layMinesButton;
 
 
 @end

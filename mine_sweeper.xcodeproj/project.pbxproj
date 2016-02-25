@@ -13,6 +13,11 @@
 		6165A42A1C7DF40400BFE8A9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6165A4281C7DF40400BFE8A9 /* Main.storyboard */; };
 		6165A42C1C7DF40400BFE8A9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6165A42B1C7DF40400BFE8A9 /* Assets.xcassets */; };
 		6165A42F1C7DF40400BFE8A9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6165A42D1C7DF40400BFE8A9 /* LaunchScreen.storyboard */; };
+		6165A4381C7DF43200BFE8A9 /* MineBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 6165A4371C7DF43200BFE8A9 /* MineBoard.m */; };
+		6165A43C1C7DF9A300BFE8A9 /* MineBoardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6165A43B1C7DF9A300BFE8A9 /* MineBoardView.m */; };
+		61D6AC4E1C7EE90900D6CEF0 /* PlayerBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AC4D1C7EE90900D6CEF0 /* PlayerBoard.m */; };
+		61D6AC511C7F3AC400D6CEF0 /* MineSweeperViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AC501C7F3AC400D6CEF0 /* MineSweeperViewController.m */; };
+		61D6AC541C7F3C1C00D6CEF0 /* PlayerBoardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AC531C7F3C1C00D6CEF0 /* PlayerBoardView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +31,16 @@
 		6165A42B1C7DF40400BFE8A9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6165A42E1C7DF40400BFE8A9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6165A4301C7DF40400BFE8A9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6165A4361C7DF43200BFE8A9 /* MineBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MineBoard.h; sourceTree = "<group>"; };
+		6165A4371C7DF43200BFE8A9 /* MineBoard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MineBoard.m; sourceTree = "<group>"; };
+		6165A43A1C7DF9A300BFE8A9 /* MineBoardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MineBoardView.h; sourceTree = "<group>"; };
+		6165A43B1C7DF9A300BFE8A9 /* MineBoardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MineBoardView.m; sourceTree = "<group>"; };
+		61D6AC4C1C7EE90900D6CEF0 /* PlayerBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerBoard.h; sourceTree = "<group>"; };
+		61D6AC4D1C7EE90900D6CEF0 /* PlayerBoard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerBoard.m; sourceTree = "<group>"; };
+		61D6AC4F1C7F3AC400D6CEF0 /* MineSweeperViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MineSweeperViewController.h; sourceTree = "<group>"; };
+		61D6AC501C7F3AC400D6CEF0 /* MineSweeperViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MineSweeperViewController.m; sourceTree = "<group>"; };
+		61D6AC521C7F3C1C00D6CEF0 /* PlayerBoardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerBoardView.h; sourceTree = "<group>"; };
+		61D6AC531C7F3C1C00D6CEF0 /* PlayerBoardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerBoardView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +73,7 @@
 		6165A41E1C7DF40400BFE8A9 /* mine_sweeper */ = {
 			isa = PBXGroup;
 			children = (
+				6165A4391C7DF43B00BFE8A9 /* MineSweeper */,
 				6165A4221C7DF40400BFE8A9 /* AppDelegate.h */,
 				6165A4231C7DF40400BFE8A9 /* AppDelegate.m */,
 				6165A4251C7DF40400BFE8A9 /* ViewController.h */,
@@ -77,6 +93,23 @@
 				6165A4201C7DF40400BFE8A9 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6165A4391C7DF43B00BFE8A9 /* MineSweeper */ = {
+			isa = PBXGroup;
+			children = (
+				6165A4361C7DF43200BFE8A9 /* MineBoard.h */,
+				6165A4371C7DF43200BFE8A9 /* MineBoard.m */,
+				6165A43A1C7DF9A300BFE8A9 /* MineBoardView.h */,
+				6165A43B1C7DF9A300BFE8A9 /* MineBoardView.m */,
+				61D6AC4C1C7EE90900D6CEF0 /* PlayerBoard.h */,
+				61D6AC4D1C7EE90900D6CEF0 /* PlayerBoard.m */,
+				61D6AC521C7F3C1C00D6CEF0 /* PlayerBoardView.h */,
+				61D6AC531C7F3C1C00D6CEF0 /* PlayerBoardView.m */,
+				61D6AC4F1C7F3AC400D6CEF0 /* MineSweeperViewController.h */,
+				61D6AC501C7F3AC400D6CEF0 /* MineSweeperViewController.m */,
+			);
+			name = MineSweeper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -152,6 +185,11 @@
 				6165A4271C7DF40400BFE8A9 /* ViewController.m in Sources */,
 				6165A4241C7DF40400BFE8A9 /* AppDelegate.m in Sources */,
 				6165A4211C7DF40400BFE8A9 /* main.m in Sources */,
+				61D6AC4E1C7EE90900D6CEF0 /* PlayerBoard.m in Sources */,
+				61D6AC541C7F3C1C00D6CEF0 /* PlayerBoardView.m in Sources */,
+				6165A43C1C7DF9A300BFE8A9 /* MineBoardView.m in Sources */,
+				61D6AC511C7F3AC400D6CEF0 /* MineSweeperViewController.m in Sources */,
+				6165A4381C7DF43200BFE8A9 /* MineBoard.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,6 +302,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = mine_sweeper/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.xillysoft.mine-sweeper";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -275,6 +314,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = mine_sweeper/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.xillysoft.mine-sweeper";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -300,6 +340,7 @@
 				6165A4351C7DF40400BFE8A9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
