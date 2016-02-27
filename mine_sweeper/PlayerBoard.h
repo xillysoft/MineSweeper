@@ -12,7 +12,8 @@
 typedef NS_ENUM(NSInteger, CellState){
     CellStateCovered, //覆盖，不可见
     CellStateUncovered, //点击开，无雷;对于无雷的单元个，在其上显示周围雷数目
-    CellStateMarkedAsMine //标记为雷
+    CellStateMarkedAsMine, //标记为雷
+    CellStateMarkedAsUncertain, //标记为不确定
 };
 
 

@@ -16,7 +16,7 @@
 		6165A4381C7DF43200BFE8A9 /* MineBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 6165A4371C7DF43200BFE8A9 /* MineBoard.m */; };
 		6165A43C1C7DF9A300BFE8A9 /* MineBoardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6165A43B1C7DF9A300BFE8A9 /* MineBoardView.m */; };
 		61D6AC4E1C7EE90900D6CEF0 /* PlayerBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AC4D1C7EE90900D6CEF0 /* PlayerBoard.m */; };
-		61D6AC511C7F3AC400D6CEF0 /* MineSweeperViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AC501C7F3AC400D6CEF0 /* MineSweeperViewController.m */; };
+		61D6AC511C7F3AC400D6CEF0 /* PlayerBoardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AC501C7F3AC400D6CEF0 /* PlayerBoardViewController.m */; };
 		61D6AC541C7F3C1C00D6CEF0 /* PlayerBoardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AC531C7F3C1C00D6CEF0 /* PlayerBoardView.m */; };
 /* End PBXBuildFile section */
 
@@ -37,8 +37,8 @@
 		6165A43B1C7DF9A300BFE8A9 /* MineBoardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MineBoardView.m; sourceTree = "<group>"; };
 		61D6AC4C1C7EE90900D6CEF0 /* PlayerBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerBoard.h; sourceTree = "<group>"; };
 		61D6AC4D1C7EE90900D6CEF0 /* PlayerBoard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerBoard.m; sourceTree = "<group>"; };
-		61D6AC4F1C7F3AC400D6CEF0 /* MineSweeperViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MineSweeperViewController.h; sourceTree = "<group>"; };
-		61D6AC501C7F3AC400D6CEF0 /* MineSweeperViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MineSweeperViewController.m; sourceTree = "<group>"; };
+		61D6AC4F1C7F3AC400D6CEF0 /* PlayerBoardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerBoardViewController.h; sourceTree = "<group>"; };
+		61D6AC501C7F3AC400D6CEF0 /* PlayerBoardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerBoardViewController.m; sourceTree = "<group>"; };
 		61D6AC521C7F3C1C00D6CEF0 /* PlayerBoardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerBoardView.h; sourceTree = "<group>"; };
 		61D6AC531C7F3C1C00D6CEF0 /* PlayerBoardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerBoardView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -106,8 +106,8 @@
 				61D6AC4D1C7EE90900D6CEF0 /* PlayerBoard.m */,
 				61D6AC521C7F3C1C00D6CEF0 /* PlayerBoardView.h */,
 				61D6AC531C7F3C1C00D6CEF0 /* PlayerBoardView.m */,
-				61D6AC4F1C7F3AC400D6CEF0 /* MineSweeperViewController.h */,
-				61D6AC501C7F3AC400D6CEF0 /* MineSweeperViewController.m */,
+				61D6AC4F1C7F3AC400D6CEF0 /* PlayerBoardViewController.h */,
+				61D6AC501C7F3AC400D6CEF0 /* PlayerBoardViewController.m */,
 			);
 			name = MineSweeper;
 			sourceTree = "<group>";
@@ -188,7 +188,7 @@
 				61D6AC4E1C7EE90900D6CEF0 /* PlayerBoard.m in Sources */,
 				61D6AC541C7F3C1C00D6CEF0 /* PlayerBoardView.m in Sources */,
 				6165A43C1C7DF9A300BFE8A9 /* MineBoardView.m in Sources */,
-				61D6AC511C7F3AC400D6CEF0 /* MineSweeperViewController.m in Sources */,
+				61D6AC511C7F3AC400D6CEF0 /* PlayerBoardViewController.m in Sources */,
 				6165A4381C7DF43200BFE8A9 /* MineBoard.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

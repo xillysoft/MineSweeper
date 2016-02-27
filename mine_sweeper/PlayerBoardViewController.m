@@ -6,19 +6,20 @@
 //  Copyright © 2016 赵小健. All rights reserved.
 //
 
-#import "MineSweeperViewController.h"
+#import "PlayerBoardViewController.h"
 #import "MineBoard.h"
 #import "PlayerBoard.h"
 
-@interface MineSweeperViewController()
+@interface PlayerBoardViewController()
 
+@property PlayerState playerState;
 @property(nonatomic) MineBoard *mineBoard;
 @property(nonatomic) PlayerBoard *playerBoard;
 
 @end
 
 
-@implementation MineSweeperViewController
+@implementation PlayerBoardViewController
 
 -(MineBoard *)mineBoard
 {
@@ -34,6 +35,8 @@
 {
     self = [super init];
     if(self){
+        _playerState = PlayerStateInit;
+        
         int rows = 16;
         int columns = 16;
         int numberOfMines = 40;

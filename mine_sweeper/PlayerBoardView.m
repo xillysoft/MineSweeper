@@ -27,13 +27,64 @@
 }
 -(void)initialize
 {
-    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
-    [self addGestureRecognizer:gestureRecognizer];
+    UITapGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTapGesture:)];
+    singleTapRecognizer.numberOfTapsRequired = 1;
+    [self addGestureRecognizer:singleTapRecognizer];
+    
+    UITapGestureRecognizer *doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTapGesture:)];
+    doubleTapRecognizer.numberOfTapsRequired = 2;
+    [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
+    [self addGestureRecognizer:doubleTapRecognizer];
+    
 }
 
--(void)handleTapGesture:(UITapGestureRecognizer *)gestureRecognizer
+-(void)handleSingleTapGesture:(UITapGestureRecognizer *)gestureRecognizer
 {    
     CGPoint location = [gestureRecognizer locationInView:gestureRecognizer.view];
+    int row, column;
+    BOOL onCell = [self cellLocationAtPoint:location resultRow:&row resultColumn:&column];
+    if(onCell) {
+        [self.playerBoard checkCellStateAtRow:row column:column];
+        [self setNeedsDisplay];
+    }
+}
+
+-(void)handleDoubleTapGesture:(UITapGestureRecognizer *)gestureRecognizer
+{
+    CGPoint location = [gestureRecognizer locationInView:gestureRecognizer.view];
+    int row, column;
+    BOOL onCell = [self cellLocationAtPoint:location resultRow:&row resultColumn:&column];
+    if(onCell) {
+        CellState state = [self.playerBoard cellStateAtRow:row column:column];
+        switch(state){
+            case CellStateCovered:{
+                [self.playerBoard setCellState:CellStateMarkedAsMine AtRow:row column:column];
+                [self setNeedsDisplay];
+            }
+            break;
+            
+            case CellStateMarkedAsMine:{
+                [self.playerBoard setCellState:CellStateMarkedAsUncertain AtRow:row column:column];
+                [self setNeedsDisplay];
+            }
+            break;
+                
+            case CellStateMarkedAsUncertain:{
+                [self.playerBoard setCellState:CellStateCovered AtRow:row column:column];
+                [self setNeedsDisplay];
+            }
+            break;
+            
+            case CellStateUncovered:{
+                
+            }
+            break;
+        }
+    }
+}
+
+- (BOOL)cellLocationAtPoint:(CGPoint)location resultRow:(int *)resultRowPtr resultColumn:(int *)resultColumnPtr
+{
     
     CGRect bounds = self.bounds;
     MineBoard *mineBoard = self.playerBoard.mineBoard;
@@ -49,11 +100,11 @@
     if(location.x>=0 && location.x<=size*columns && location.y>=0 && location.y<size*rows){
         int row = location.y/size;
         int column = location.x/size;
-        NSLog(@"--touched at cell:[%d, %d]", row, column);
-        [self.playerBoard checkCellStateAtRow:row column:column];
-        [self setNeedsDisplay];
-    }
-
+        *resultRowPtr = row;
+        *resultColumnPtr = column;
+        return TRUE;
+    }else
+        return FALSE;
 }
 
 - (void)setPlayerBoard:(PlayerBoard *)playerBoard
@@ -83,10 +134,11 @@
         @{NSForegroundColorAttributeName:[UIColor blueColor], NSFontAttributeName:[UIFont boldSystemFontOfSize:12], NSParagraphStyleAttributeName:paraStyle};
     });
     
-    CGFloat x = x0;
-    for(int row=0; row<rows; row++, x+=size){
-        CGFloat y = y0;
-        for(int column=0; column<columns; column++, y+=size){
+
+    CGFloat y = y0;
+    for(int row=0; row<rows; row++, y+=size){
+        CGFloat x = x0;
+        for(int column=0; column<columns; column++, x+=size){
             CGRect cellRect = CGRectMake(x, y, size, size);
             CellState state = [self.playerBoard cellStateAtRow:row column:column];
             switch(state){
@@ -106,6 +158,18 @@
                 }
                 break;
                     
+                case CellStateMarkedAsUncertain:
+                {
+                    CGContextSetFillColorWithColor(context, [UIColor blueColor].CGColor);
+                    CGContextFillRect(context, cellRect);
+                    NSString *uncertainMark = @"?";
+                    NSDictionary *attributes1 = @{NSForegroundColorAttributeName:[UIColor darkGrayColor], NSFontAttributeName:[UIFont boldSystemFontOfSize:16]};
+                    CGSize size1 = [uncertainMark sizeWithAttributes:attributes1];
+                    CGRect rect1 = CGRectMake(x+(size-size1.width)/2, y+(size-size1.height)/2, size, size);
+                    [uncertainMark drawInRect:rect1 withAttributes:attributes1];
+                }
+                    break;
+                    
                 case CellStateUncovered:
                 {
                     CGContextSetFillColorWithColor(context, [UIColor lightGrayColor].CGColor);
@@ -114,7 +178,7 @@
                     if(numberOfMinesAround > 0){
                         NSString *text = [NSString stringWithFormat:@"%d", numberOfMinesAround];
                         CGSize textSize = [text sizeWithAttributes:attribs];
-                        CGRect rect1 = CGRectMake(x, (size-textSize.height)/2, size, size);
+                        CGRect rect1 = CGRectMake(x, y+(size-textSize.height)/2, size, size);
                         [text drawInRect:rect1 withAttributes:attribs];
                     }
                 }

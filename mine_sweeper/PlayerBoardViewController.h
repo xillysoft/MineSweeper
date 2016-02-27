@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MineSweeperViewController : UIViewController
+typedef NS_ENUM(NSInteger, PlayerState){
+    PlayerStateInit, //initial state
+    PlayerStateAlive,
+    PlayerStateDead
+};
+
+
+@interface PlayerBoardViewController : UIViewController
 
 @end
