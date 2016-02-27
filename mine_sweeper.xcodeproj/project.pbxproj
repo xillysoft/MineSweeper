@@ -18,6 +18,8 @@
 		61D6AC4E1C7EE90900D6CEF0 /* PlayerBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AC4D1C7EE90900D6CEF0 /* PlayerBoard.m */; };
 		61D6AC511C7F3AC400D6CEF0 /* PlayerBoardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AC501C7F3AC400D6CEF0 /* PlayerBoardViewController.m */; };
 		61D6AC541C7F3C1C00D6CEF0 /* PlayerBoardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AC531C7F3C1C00D6CEF0 /* PlayerBoardView.m */; };
+		61D6AC5C1C8182ED00D6CEF0 /* Minesweeper_Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 61D6AC5B1C8182ED00D6CEF0 /* Minesweeper_Icon.png */; };
+		61D6AC601C81838600D6CEF0 /* Minesweeper_Icon1.png in Resources */ = {isa = PBXBuildFile; fileRef = 61D6AC5F1C81838600D6CEF0 /* Minesweeper_Icon1.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +43,8 @@
 		61D6AC501C7F3AC400D6CEF0 /* PlayerBoardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerBoardViewController.m; sourceTree = "<group>"; };
 		61D6AC521C7F3C1C00D6CEF0 /* PlayerBoardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerBoardView.h; sourceTree = "<group>"; };
 		61D6AC531C7F3C1C00D6CEF0 /* PlayerBoardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerBoardView.m; sourceTree = "<group>"; };
+		61D6AC5B1C8182ED00D6CEF0 /* Minesweeper_Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Minesweeper_Icon.png; sourceTree = "<group>"; };
+		61D6AC5F1C81838600D6CEF0 /* Minesweeper_Icon1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Minesweeper_Icon1.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +77,7 @@
 		6165A41E1C7DF40400BFE8A9 /* mine_sweeper */ = {
 			isa = PBXGroup;
 			children = (
+				61D6AC581C81811D00D6CEF0 /* Resources */,
 				6165A4391C7DF43B00BFE8A9 /* MineSweeper */,
 				6165A4221C7DF40400BFE8A9 /* AppDelegate.h */,
 				6165A4231C7DF40400BFE8A9 /* AppDelegate.m */,
@@ -110,6 +115,15 @@
 				61D6AC501C7F3AC400D6CEF0 /* PlayerBoardViewController.m */,
 			);
 			name = MineSweeper;
+			sourceTree = "<group>";
+		};
+		61D6AC581C81811D00D6CEF0 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				61D6AC5B1C8182ED00D6CEF0 /* Minesweeper_Icon.png */,
+				61D6AC5F1C81838600D6CEF0 /* Minesweeper_Icon1.png */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -169,9 +183,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61D6AC5C1C8182ED00D6CEF0 /* Minesweeper_Icon.png in Resources */,
 				6165A42F1C7DF40400BFE8A9 /* LaunchScreen.storyboard in Resources */,
 				6165A42C1C7DF40400BFE8A9 /* Assets.xcassets in Resources */,
 				6165A42A1C7DF40400BFE8A9 /* Main.storyboard in Resources */,
+				61D6AC601C81838600D6CEF0 /* Minesweeper_Icon1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

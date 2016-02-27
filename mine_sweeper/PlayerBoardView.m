@@ -153,8 +153,10 @@
                 {
                     CGContextSetFillColorWithColor(context, [UIColor blueColor].CGColor);
                     CGContextFillRect(context, cellRect);
-                    CGContextSetFillColorWithColor(context, [UIColor darkGrayColor].CGColor);
-                    CGContextFillEllipseInRect(context, cellRect);
+                    [[UIColor blueColor] setFill];
+                    UIImage *mineIcon = [UIImage imageNamed:@"Minesweeper_Icon1.png"];
+                    NSAssert(mineIcon!=nil, @"mine icon could not be loaded.");
+                    [mineIcon drawInRect:cellRect blendMode:kCGBlendModeMultiply alpha:1.0];
                 }
                 break;
                     
@@ -163,10 +165,11 @@
                     CGContextSetFillColorWithColor(context, [UIColor blueColor].CGColor);
                     CGContextFillRect(context, cellRect);
                     NSString *uncertainMark = @"?";
-                    NSDictionary *attributes1 = @{NSForegroundColorAttributeName:[UIColor darkGrayColor], NSFontAttributeName:[UIFont boldSystemFontOfSize:16]};
+                    NSDictionary *attributes1 = @{NSForegroundColorAttributeName:[UIColor whiteColor], NSFontAttributeName:[UIFont boldSystemFontOfSize:20]};
                     CGSize size1 = [uncertainMark sizeWithAttributes:attributes1];
-                    CGRect rect1 = CGRectMake(x+(size-size1.width)/2, y+(size-size1.height)/2, size, size);
-                    [uncertainMark drawInRect:rect1 withAttributes:attributes1];
+                    CGPoint point1 = CGPointMake(x+(size-size1.width)/2, y+(size-size1.height)/2);
+                    [uncertainMark drawAtPoint:point1 withAttributes:attributes1];
+
                 }
                     break;
                     
