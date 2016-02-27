@@ -171,7 +171,7 @@
                     [uncertainMark drawAtPoint:point1 withAttributes:attributes1];
 
                 }
-                    break;
+                break;
                     
                 case CellStateUncovered:
                 {
