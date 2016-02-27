@@ -65,7 +65,7 @@
             NSLog(@"###There is mine here, player dead!");
         }else{ //there isn't a mine at checked position
             [self setCellState:CellStateUncovered AtRow:row column:column];
-            if ([self.mineBoard numberOfMinesAroundCellAtRow:row column:column] == 0) {
+            if ([self.mineBoard numberOfMinesAroundCellAtRow:row column:column] == 0) { //there isn't mine around this position
                 //TODO: recursively uncover cells around this cell
                 [self uncoverCellAtRow:row column:column];
             }
@@ -84,14 +84,15 @@
 //internal use only
 - (void)uncoverCellAtRow:(int)row column:(int)column
 {
-    if([self cellStateAtRow:row column:column] == CellStateCovered)
-    if([self.mineBoard numberOfMinesAroundCellAtRow:row column:column] == 0){
-        for(int r=row-1; r<=row+1; r++){
-            for(int c=column-1; c<=column+1; c++){
-                if(!(r==row && c==column) && (r>=0 && r<[self rows]) && (c>=0 && c<[self columns])){
-                    [self setCellState:CellStateUncovered AtRow:r column:c];
-                    //recursively uncover cells without mines around
-                    [self uncoverCellAtRow:r column:c];
+    if([self cellStateAtRow:row column:column] == CellStateCovered){
+        if([self.mineBoard numberOfMinesAroundCellAtRow:row column:column] == 0){
+            for(int r=row-1; r<=row+1; r++){
+                for(int c=column-1; c<=column+1; c++){
+                    if(!(r==row && c==column) && (r>=0 && r<[self rows]) && (c>=0 && c<[self columns])){
+                        [self setCellState:CellStateUncovered AtRow:r column:c];
+                        //recursively uncover cells without mines around
+                        [self uncoverCellAtRow:r column:c];
+                    }
                 }
             }
         }
