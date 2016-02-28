@@ -19,6 +19,11 @@
 @end
 
 
+/*
+ * 初级：9x9, 10 mines
+ * 中级：16x16, 40 mines
+ * 高级：30x16, 99 mines
+ */
 @implementation PlayerBoardViewController
 
 -(MineBoard *)mineBoard
