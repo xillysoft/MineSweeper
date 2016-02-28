@@ -79,7 +79,7 @@
             case CellStateUncovered:{
                 int numberOfMinesAround = [self.playerBoard.mineBoard numberOfMinesAroundCellAtRow:row column:column];
                 int numberOfMarkedAsMinesAround = [self.playerBoard numberOfMarkedAsMinesAround:row column:column];
-                if(numberOfMarkedAsMinesAround == numberOfMinesAround){
+                if(numberOfMinesAround == 0 || numberOfMarkedAsMinesAround == numberOfMinesAround){
                     //uncover all cells that is not marked as mine
                     [self.playerBoard uncoverUnmarkedAsMineCellsAround:row column:column];
                     [self setNeedsDisplay];

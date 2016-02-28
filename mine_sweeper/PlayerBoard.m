@@ -81,6 +81,9 @@
                 if(cellState == CellStateCovered){ //so that it is not CellStateMarkedAsMine
                     if(! [self.mineBoard hasMineAtRow:r column:c]){
                         [self setCellState:CellStateUncovered AtRow:r column:c];
+                        if([self.mineBoard numberOfMinesAroundCellAtRow:r column:c] == 0){
+                            [self uncoverUnmarkedAsMineCellsAround:r column:c];
+                        }
                     }else{ //uncover a cell that is a mine, player dead.
                         success = FALSE;
                         [self setCellState:CellStateUncovered AtRow:r column:c];
