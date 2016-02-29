@@ -9,8 +9,11 @@
 #import "PlayerBoardView.h"
 #import "PlayerBoard.h"
 #import "CellLocation.h"
+#import "PlayerBoardViewController.h"
 
-@interface PlayerBoardView()
+@interface PlayerBoardView(){
+
+}
 
 
 @end
@@ -18,9 +21,9 @@
 
 @implementation PlayerBoardView
 
--(instancetype)initWithCoder:(NSCoder *)aDecoder
+-(instancetype)initWithFrame:(CGRect)frame
 {
-    self = [super initWithCoder:aDecoder];
+    self = [super initWithFrame:frame];
     if(self){
         [self initialize];
     }
@@ -36,88 +39,43 @@
     return self;
 }
 
--(instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if(self){
-        [self initialize];
-    }
-    return self;
-}
-
-//designated init method
+//initializer method
 -(void)initialize
 {
+    //register single-tap handler
     UITapGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTapGesture:)];
     singleTapRecognizer.numberOfTapsRequired = 1;
     [self addGestureRecognizer:singleTapRecognizer];
     
+    //register double-tap handler
     UITapGestureRecognizer *doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTapGesture:)];
     doubleTapRecognizer.numberOfTapsRequired = 2;
     [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
     [self addGestureRecognizer:doubleTapRecognizer];
-    
 }
 
+//UITapGestureRecognizer handler
 -(void)handleSingleTapGesture:(UITapGestureRecognizer *)gestureRecognizer
 {    
     CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
     CellLocation *location = [self cellLocationAtPoint:point];
     if(location) {
-        [self.playerBoard checkCellStateAtRow:location.row column:location.column];
-        [self setNeedsDisplay];
+        [self.delegate playerBoardView:self didSingleTapOnCell:location];
     }
 }
 
+
+//UITapGestureRecognizer handler
 -(void)handleDoubleTapGesture:(UITapGestureRecognizer *)gestureRecognizer
 {
     CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
     CellLocation *location = [self cellLocationAtPoint:point];
-    if(location) {
-        int row = location.row;
-        int column = location.column;
-        CellState state = [self.playerBoard cellStateAtRow:row column:column];
-        switch(state){
-            case CellStateCovered:{
-                [self.playerBoard setCellState:CellStateMarkedAsMine AtRow:row column:column];
-                [self setNeedsDisplay];
-            }
-            break;
-            
-            case CellStateMarkedAsMine:{
-                [self.playerBoard setCellState:CellStateMarkedAsUncertain AtRow:row column:column];
-                [self setNeedsDisplay];
-            }
-            break;
-                
-            case CellStateMarkedAsUncertain:{
-                [self.playerBoard setCellState:CellStateCovered AtRow:row column:column];
-                [self setNeedsDisplay];
-            }
-            break;
-            
-            case CellStateUncovered:{
-                //周围实际雷数
-                int numberOfMinesAround = [self.playerBoard.mineBoard numberOfMinesAroundCellAtRow:row column:column];
-                //周围标记为雷的数目
-                int numberOfMarkedAsMinesAround = [self.playerBoard numberOfMarkedAsMinesAround:row column:column];
-                if(numberOfMarkedAsMinesAround == numberOfMinesAround){
-                    //uncover all cells that is not marked as mine
-                    BOOL success = [self.playerBoard uncoverAllNotMarkedAsMineCellsAround:row column:column];
-                    if (! success) {
-                        NSLog(@"--A mine exploded, player dead!");
-                        //TODO: Player dead.
-                    }
-                    [self setNeedsDisplay];
-                }
-            }
-            break;
-        }
+    if(location){
+        [self.delegate playerBoardView:self didDoubleTapOnCell:location];
     }
 }
 
-
-- (CellLocation *)cellLocationAtPoint:(CGPoint)location
+- (CellLocation *)cellLocationAtPoint:(CGPoint)point
 {
     
     CGRect bounds = self.bounds;
@@ -127,13 +85,13 @@
     CGFloat size = MIN(hSize, vSize);
     int columns = mineBoard.columns;
     int rows = mineBoard.rows;
-    CGFloat x0 = (bounds.size.width-size*columns)/2;
+    CGFloat x0 = (bounds.size.width-size*columns)/2; //必须和-drawRect:方法相对应
     CGFloat y0 = (bounds.size.height-size*rows)/2;
-    location.x -= x0;
-    location.y -= y0;
-    if(location.x>=0 && location.x<=size*columns && location.y>=0 && location.y<size*rows){
-        int row = location.y/size;
-        int column = location.x/size;
+    point.x -= x0;
+    point.y -= y0;
+    if(point.x>=0 && point.x<=size*columns && point.y>=0 && point.y<size*rows){
+        int row = point.y/size;
+        int column = point.x/size;
         return [[CellLocation alloc] initWithRow:row column:column];
     }else{
         return nil;

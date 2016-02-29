@@ -10,13 +10,13 @@
 #import "PlayerBoard.h"
 #import "MineBoard.h"
 #import "PlayerBoardView.h"
+#import "CellLocation.h"
 
 typedef NS_ENUM(NSInteger, PlayerState){
     PlayerStateInit, //initial state
     PlayerStateAlive,
     PlayerStateDead
 };
-
 
 @interface PlayerBoardViewController : UIViewController
 
@@ -28,5 +28,8 @@ typedef NS_ENUM(NSInteger, PlayerState){
 
 //plaeyr board view object
 @property PlayerBoardView *playerBoardView;
+
+-(void)playerBoardView:(PlayerBoardView *)playerBoardView didSingleTapOnCell:(CellLocation *)location;
+-(void)playerBoardView:(PlayerBoardView *)playerBoardView didDoubleTapOnCell:(CellLocation *)location;
 
 @end

@@ -9,6 +9,8 @@
 #import "PlayerBoardViewController.h"
 #import "MineBoard.h"
 #import "PlayerBoard.h"
+#import "PlayerBoardView.h"
+#import "CellLocation.h"
 
 @interface PlayerBoardViewController()
 
@@ -53,10 +55,80 @@
 
     //TODO: 修改为delegate pattern，由view通过delegate查询data model
     self.playerBoardView.playerBoard = self.playerBoard;
+    self.playerBoardView.delegate = self;
 
     //defer lay mines until first user-tap action!
-    /* [self.mineBoard layMines:numberOfMines]; */
+     [self.playerBoard.mineBoard layMines:numberOfMines];
 
 }
+
+
+
+//--delegate--
+-(void)playerBoardView:(PlayerBoardView *)playerBoardView didSingleTapOnCell:(CellLocation *)location
+{
+    [self.playerBoard checkCellStateAtRow:location.row column:location.column];
+    [playerBoardView setNeedsDisplay]; //change to as [self.delegate reloadData];
+}
+
+//--delegate
+-(void)playerBoardView:(PlayerBoardView *)playerBoardView didDoubleTapOnCell:(CellLocation *)location
+{
+    {
+        int row = location.row;
+        int column = location.column;
+        CellState state = [self.playerBoard cellStateAtRow:row column:column];
+        switch(state){
+            case CellStateCovered:{ //Covered==>MarkedAsMine
+                [self.playerBoard setCellState:CellStateMarkedAsMine AtRow:row column:column];
+                [playerBoardView setNeedsDisplay];
+            }
+                break;
+                
+            case CellStateMarkedAsMine:{ //MarkedAsMine==>Uncertain
+                [self.playerBoard setCellState:CellStateMarkedAsUncertain AtRow:row column:column];
+                [playerBoardView setNeedsDisplay];
+            }
+                break;
+                
+            case CellStateMarkedAsUncertain:{ //Uncertain==>Covered
+                [self.playerBoard setCellState:CellStateCovered AtRow:row column:column];
+                [playerBoardView setNeedsDisplay];
+            }
+                break;
+                
+            case CellStateUncovered:{ //Uncovered, uncover cells around if available
+                //周围实际雷数
+                int numberOfMinesAround = [self.playerBoard.mineBoard numberOfMinesAroundCellAtRow:row column:column];
+                if(numberOfMinesAround == 0){
+                    int rows = self.playerBoard.rows;
+                    int columns = self.playerBoard.columns;
+                    for(int r=row-1; r<=row+1; r++){
+                        for(int c=column-1; c<=column+1; c++){
+                            if((r>=0 && r<rows) && (c>=0 && c<columns) && !(r==row && c==column)){
+                                [self.playerBoard uncoverCellAtRow:r column:c];
+                            }
+                        }
+                    }
+                }else{
+                    //周围标记为雷的数目
+                    int numberOfMarkedAsMinesAround = [self.playerBoard numberOfMarkedAsMinesAround:row column:column];
+                    if(numberOfMarkedAsMinesAround == numberOfMinesAround){
+                        //uncover all cells that is not marked as mine
+                        BOOL success = [self.playerBoard uncoverAllNotMarkedAsMineCellsAround:row column:column];
+                        if (! success) {
+                            NSLog(@"--A mine exploded, player dead!");
+                            //TODO: Player dead.
+                        }
+                        [playerBoardView setNeedsDisplay];
+                    }
+                }
+                }
+                break;
+        }
+    }
+}
+
+
 
 @end

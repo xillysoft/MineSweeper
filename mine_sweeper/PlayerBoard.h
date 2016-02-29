@@ -21,11 +21,13 @@ typedef NS_ENUM(NSInteger, CellState){
 
 -(instancetype)initWithMineBoard:(MineBoard *)mineBoard;
 @property(readonly) MineBoard *mineBoard;
+- (int)rows;
+- (int)columns;
 - (CellState)cellStateAtRow:(int)row column:(int)column;
 - (void)setCellState:(CellState)state AtRow:(int)row column:(int)column;
 - (int)numberOfMarkedAsMinesAround:(int)row column:(int)column;
 - (BOOL)uncoverAllNotMarkedAsMineCellsAround:(int)row column:(int)column;
-
+- (void)uncoverCellAtRow:(int)row column:(int)column;
 - (void)checkCellStateAtRow:(int)row column:(int)column;
 @end
 

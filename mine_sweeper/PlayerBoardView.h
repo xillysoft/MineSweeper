@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "PlayerBoard.h"
+@class PlayerBoardViewController;
 
 @interface PlayerBoardView : UIView
 
 //TODO: 修改为delegate模式
 @property(weak) PlayerBoard *playerBoard;
-
+@property(weak) PlayerBoardViewController *delegate;
 @end
