@@ -56,6 +56,9 @@
     cells[row*self.columns+column] = state;
 }
 
+/**
+ * The number of cells that is of CellStateMarkedAsMine around cell[row][column]
+ */
 - (int)numberOfMarkedAsMinesAround:(int)row column:(int)column
 {
     int count=0;
@@ -71,31 +74,35 @@
     return count;
 }
 
-- (void)uncoverUnmarkedAsMineCellsAround:(int)row column:(int)column
+- (BOOL)uncoverAllNotMarkedAsMineCellsAround:(int)row column:(int)column
 {
-    BOOL success = TRUE;
-    for(int r=row-1; r<=row+1 && success; r++){
-        for(int c=column-1; c<=column+1 && success; c++){
+    for(int r=row-1; r<=row+1; r++){
+        for(int c=column-1; c<=column+1; c++){
             if((r>=0 && r<self.rows) && (c>=0 && c<self.columns) && !(r==row && c==column)){
                 CellState cellState = [self cellStateAtRow:r column:c];
                 if(cellState == CellStateCovered){ //so that it is not CellStateMarkedAsMine
                     if(! [self.mineBoard hasMineAtRow:r column:c]){
                         [self setCellState:CellStateUncovered AtRow:r column:c];
-                        if([self.mineBoard numberOfMinesAroundCellAtRow:r column:c] == 0){
-                            [self uncoverUnmarkedAsMineCellsAround:r column:c];
+                        BOOL recursiveUncovering = NO;
+                        if(recursiveUncovering){
+                            //For each uncovered cell cell[r][c]:
+                            //recursively uncover cells around if numberOfMinesAround==numberOfMarkedAsMinesAround
+                            int numberOfMinesAround = [self.mineBoard numberOfMinesAroundCellAtRow:r column:c];
+                            int numberOfMarkedAsMinesAround = [self numberOfMarkedAsMinesAround:r column:c];
+                            if(numberOfMinesAround == numberOfMarkedAsMinesAround){
+                                [self uncoverAllNotMarkedAsMineCellsAround:r column:c];
+                            }
                         }
                     }else{ //uncover a cell that is a mine, player dead.
-                        success = FALSE;
                         [self setCellState:CellStateUncovered AtRow:r column:c];
+                        NSLog(@"--a mine exploded!");
+                        return FALSE;
                     }
                 }
             }
         }
     }
-    if(! success){
-        //TODO: player state==>dead
-        NSLog(@"--Player Dead!");
-    }
+    return TRUE;
 }
 
 //internal use only

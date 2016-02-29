@@ -24,7 +24,7 @@ typedef NS_ENUM(NSInteger, CellState){
 - (CellState)cellStateAtRow:(int)row column:(int)column;
 - (void)setCellState:(CellState)state AtRow:(int)row column:(int)column;
 - (int)numberOfMarkedAsMinesAround:(int)row column:(int)column;
-- (void)uncoverUnmarkedAsMineCellsAround:(int)row column:(int)column;
+- (BOOL)uncoverAllNotMarkedAsMineCellsAround:(int)row column:(int)column;
 
 - (void)checkCellStateAtRow:(int)row column:(int)column;
 @end

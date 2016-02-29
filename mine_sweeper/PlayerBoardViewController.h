@@ -7,6 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PlayerBoard.h"
+#import "MineBoard.h"
+#import "PlayerBoardView.h"
 
 typedef NS_ENUM(NSInteger, PlayerState){
     PlayerStateInit, //initial state
@@ -16,5 +19,14 @@ typedef NS_ENUM(NSInteger, PlayerState){
 
 
 @interface PlayerBoardViewController : UIViewController
+
+//player state
+@property PlayerState playerState;
+
+//player board object
+@property PlayerBoard *playerBoard;
+
+//plaeyr board view object
+@property PlayerBoardView *playerBoardView;
 
 @end

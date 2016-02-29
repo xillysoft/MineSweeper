@@ -11,6 +11,7 @@
 
 @interface PlayerBoardView : UIView
 
-@property(nonatomic) PlayerBoard *playerBoard;
+//TODO: 修改为delegate模式
+@property(weak) PlayerBoard *playerBoard;
 
 @end

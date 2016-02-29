@@ -26,6 +26,26 @@
     }
     return self;
 }
+
+-(instancetype)init
+{
+    self = [super init];
+    if(self){
+        [self initialize];
+    }
+    return self;
+}
+
+-(instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if(self){
+        [self initialize];
+    }
+    return self;
+}
+
+//designated init method
 -(void)initialize
 {
     UITapGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTapGesture:)];
@@ -77,11 +97,17 @@
             break;
             
             case CellStateUncovered:{
+                //周围实际雷数
                 int numberOfMinesAround = [self.playerBoard.mineBoard numberOfMinesAroundCellAtRow:row column:column];
+                //周围标记为雷的数目
                 int numberOfMarkedAsMinesAround = [self.playerBoard numberOfMarkedAsMinesAround:row column:column];
-                if(numberOfMinesAround == 0 || numberOfMarkedAsMinesAround == numberOfMinesAround){
+                if(numberOfMarkedAsMinesAround == numberOfMinesAround){
                     //uncover all cells that is not marked as mine
-                    [self.playerBoard uncoverUnmarkedAsMineCellsAround:row column:column];
+                    BOOL success = [self.playerBoard uncoverAllNotMarkedAsMineCellsAround:row column:column];
+                    if (! success) {
+                        NSLog(@"--A mine exploded, player dead!");
+                        //TODO: Player dead.
+                    }
                     [self setNeedsDisplay];
                 }
             }
@@ -112,11 +138,6 @@
     }else{
         return nil;
     }
-}
-
-- (void)setPlayerBoard:(PlayerBoard *)playerBoard
-{
-    _playerBoard = playerBoard;
 }
 
 - (void)drawRect:(CGRect)rect
@@ -153,10 +174,10 @@
                 {
                     CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
                     CGContextFillRect(context, cellRect);
-                    BOOL debug = NO;
-                    if(debug){
+                    BOOL showHiddenMine = NO;
+                    if(showHiddenMine){
                         if([self.playerBoard.mineBoard hasMineAtRow:row column:column]){
-                            CGContextSetStrokeColorWithColor(context, [UIColor blackColor].CGColor);
+                            CGContextSetStrokeColorWithColor(context, [UIColor lightGrayColor].CGColor);
                             CGRect rect1 = CGRectMake(x+size/4, y+size/4, size/2, size/2);
                             CGContextStrokeEllipseInRect(context, rect1);
                         }
@@ -179,7 +200,7 @@
                     CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
                     CGContextFillRect(context, cellRect);
                     NSString *uncertainMark = @"?";
-                    NSDictionary *attributes1 = @{NSForegroundColorAttributeName:[UIColor lightGrayColor], NSFontAttributeName:[UIFont boldSystemFontOfSize:20]};
+                    NSDictionary *attributes1 = @{NSForegroundColorAttributeName:[UIColor grayColor], NSFontAttributeName:[UIFont boldSystemFontOfSize:20]};
                     CGSize size1 = [uncertainMark sizeWithAttributes:attributes1];
                     CGPoint point1 = CGPointMake(x+(size-size1.width)/2, y+(size-size1.height)/2);
                     [uncertainMark drawAtPoint:point1 withAttributes:attributes1];

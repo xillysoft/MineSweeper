@@ -12,10 +12,6 @@
 
 @interface PlayerBoardViewController()
 
-@property PlayerState playerState;
-@property(nonatomic) MineBoard *mineBoard;
-@property(nonatomic) PlayerBoard *playerBoard;
-
 @end
 
 
@@ -26,31 +22,41 @@
  */
 @implementation PlayerBoardViewController
 
--(MineBoard *)mineBoard
+-(void)loadView
 {
-    return self.mineBoard;
+    self.playerBoardView = [[PlayerBoardView alloc] init];
+    self.view = self.playerBoardView;
+    self.view.backgroundColor = [UIColor whiteColor];
+    
 }
 
--(PlayerBoard *)playerBoard
+-(void)viewDidLoad
 {
-    return self.playerBoard;
-}
-
-- (instancetype)init
-{
-    self = [super init];
-    if(self){
-        _playerState = PlayerStateInit;
-        
-        int rows = 16;
-        int columns = 16;
-        int numberOfMines = 40;
-        self.mineBoard = [[MineBoard alloc] initWithRows:rows columns:columns];
-        [self.mineBoard layMines:numberOfMines];
-        
-        self.playerBoard = [[PlayerBoard alloc] initWithMineBoard:self.mineBoard];
+    [super viewDidLoad];
+    
+    self.playerState = PlayerStateInit;
+    
+    int rows;
+    int columns;
+    int numberOfMines;
+    if([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad){ //iPad
+        rows = 16;
+        columns = 16;
+        numberOfMines = 40;
+    }else if([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone){//iPhone, iPod Touch
+        rows = 9;
+        columns = 9;
+        numberOfMines = 10;
     }
-    return self;
+    MineBoard *mineBoard = [[MineBoard alloc] initWithRows:rows columns:columns];
+    self.playerBoard = [[PlayerBoard alloc] initWithMineBoard:mineBoard];
+
+    //TODO: 修改为delegate pattern，由view通过delegate查询data model
+    self.playerBoardView.playerBoard = self.playerBoard;
+
+    //defer lay mines until first user-tap action!
+    /* [self.mineBoard layMines:numberOfMines]; */
+
 }
 
 @end
