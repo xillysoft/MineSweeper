@@ -16,7 +16,9 @@
 
 //TODO: 修改为delegate模式
 @property(weak) PlayerBoard *playerBoard; //DataModel delegate；必须为weak引用，否则循环引用
+
 @property(weak) id<PlayerBoardViewDelegate> delegate; //Action handler delegate；必须为weak引用，否则会产生循环引用
+
 - (void)drawRect:(CGRect)rect;
 @end
 

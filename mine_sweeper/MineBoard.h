@@ -27,6 +27,10 @@
  * lay numberOfMines mines on this MineBoard randomly
  */
 - (void)layMines:(int)numOfMines;
+/**
+ * return whether there is a cell with mine around cell[row][column]
+ */
+-(BOOL)hasMineAroundCellAtRow:(int)row column:(int)column;
 
 /**
  * return number of mines around cell[row][column]

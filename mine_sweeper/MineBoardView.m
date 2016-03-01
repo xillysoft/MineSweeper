@@ -12,32 +12,24 @@
 
 @end
 
-@implementation MineBoardView{
-    MineBoard *_mineBoard;
-}
+@implementation MineBoardView
 
 - (void)setMineBoard:(MineBoard *)mineBoard
 {
-    _mineBoard = mineBoard;
     [self setNeedsDisplay];
-}
-
-- (MineBoard *)mineBoard
-{
-    return _mineBoard;
 }
 
 - (void)drawRect:(CGRect)rect
 {
     CGRect bounds = [self bounds];
-    CGFloat hSize = bounds.size.width/_mineBoard.columns;
-    CGFloat vSize = bounds.size.height/_mineBoard.rows;
+    CGFloat hSize = bounds.size.width/self.mineBoard.columns;
+    CGFloat vSize = bounds.size.height/self.mineBoard.rows;
     CGFloat size = MIN(hSize, vSize);
-    CGFloat x0 = (bounds.size.width - size*_mineBoard.columns)/2;
-    CGFloat y0 = (bounds.size.height - size*_mineBoard.rows)/2;
+    CGFloat x0 = (bounds.size.width - size*self.mineBoard.columns)/2;
+    CGFloat y0 = (bounds.size.height - size*self.mineBoard.rows)/2;
 
     CGContextRef context = UIGraphicsGetCurrentContext();
-    CGRect rect0 = CGRectMake(x0-1, y0-1, size*_mineBoard.columns+2, size*_mineBoard.rows+2);
+    CGRect rect0 = CGRectMake(x0-1, y0-1, size*self.mineBoard.columns+2, size*self.mineBoard.rows+2);
     CGContextSetFillColorWithColor(context, [UIColor blueColor].CGColor);
     CGContextFillRect(context, rect0);
 
@@ -47,10 +39,10 @@
     NSDictionary *attri = @{NSFontAttributeName:textFont, NSForegroundColorAttributeName: [UIColor blueColor], NSParagraphStyleAttributeName:paraStyle};
     
     CGFloat y = y0;
-    for(int r=0; r<_mineBoard.rows; r++, y+=size){
+    for(int r=0; r<self.mineBoard.rows; r++, y+=size){
         CGFloat x = x0;
-        for(int c=0; c<_mineBoard.columns; c++, x+=size){
-            BOOL hasMine = [_mineBoard hasMineAtRow:r column:c];
+        for(int c=0; c<self.mineBoard.columns; c++, x+=size){
+            BOOL hasMine = [self.mineBoard hasMineAtRow:r column:c];
             UIColor *color = hasMine ? [UIColor redColor] : [UIColor lightGrayColor];
             CGRect rect = CGRectMake(x, y, size, size);
             CGContextSetFillColorWithColor(context, [color CGColor]);
@@ -58,7 +50,7 @@
             CGContextSetStrokeColorWithColor(context, [UIColor darkGrayColor].CGColor);
             CGContextStrokeRect(context, rect);
             if(! hasMine){
-                int numberOfMinesAround = [_mineBoard numberOfMinesAroundCellAtRow:r column:c];
+                int numberOfMinesAround = [self.mineBoard numberOfMinesAroundCellAtRow:r column:c];
                 if(numberOfMinesAround > 0 ){
                     NSString *text = [NSString stringWithFormat:@"%d", numberOfMinesAround];
                     CGSize textSize = [text sizeWithAttributes:attri];

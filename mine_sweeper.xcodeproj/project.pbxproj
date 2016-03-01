@@ -20,6 +20,8 @@
 		61D6AC5C1C8182ED00D6CEF0 /* Minesweeper_Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 61D6AC5B1C8182ED00D6CEF0 /* Minesweeper_Icon.png */; };
 		61D6AC601C81838600D6CEF0 /* Minesweeper_Icon1.png in Resources */ = {isa = PBXBuildFile; fileRef = 61D6AC5F1C81838600D6CEF0 /* Minesweeper_Icon1.png */; };
 		61D6AC651C82A13C00D6CEF0 /* CellLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AC641C82A13C00D6CEF0 /* CellLocation.m */; };
+		61D6AC6B1C85E5EB00D6CEF0 /* flagIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 61D6AC681C85E5EB00D6CEF0 /* flagIcon.png */; };
+		61D6AC6C1C85E5EB00D6CEF0 /* mine_flag.png in Resources */ = {isa = PBXBuildFile; fileRef = 61D6AC691C85E5EB00D6CEF0 /* mine_flag.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +47,8 @@
 		61D6AC5F1C81838600D6CEF0 /* Minesweeper_Icon1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Minesweeper_Icon1.png; sourceTree = "<group>"; };
 		61D6AC631C82A13C00D6CEF0 /* CellLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellLocation.h; sourceTree = "<group>"; };
 		61D6AC641C82A13C00D6CEF0 /* CellLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CellLocation.m; sourceTree = "<group>"; };
+		61D6AC681C85E5EB00D6CEF0 /* flagIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = flagIcon.png; sourceTree = "<group>"; };
+		61D6AC691C85E5EB00D6CEF0 /* mine_flag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mine_flag.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +126,8 @@
 			children = (
 				61D6AC5B1C8182ED00D6CEF0 /* Minesweeper_Icon.png */,
 				61D6AC5F1C81838600D6CEF0 /* Minesweeper_Icon1.png */,
+				61D6AC681C85E5EB00D6CEF0 /* flagIcon.png */,
+				61D6AC691C85E5EB00D6CEF0 /* mine_flag.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -183,7 +189,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61D6AC6B1C85E5EB00D6CEF0 /* flagIcon.png in Resources */,
 				61D6AC5C1C8182ED00D6CEF0 /* Minesweeper_Icon.png in Resources */,
+				61D6AC6C1C85E5EB00D6CEF0 /* mine_flag.png in Resources */,
 				6165A42F1C7DF40400BFE8A9 /* LaunchScreen.storyboard in Resources */,
 				6165A42C1C7DF40400BFE8A9 /* Assets.xcassets in Resources */,
 				6165A42A1C7DF40400BFE8A9 /* Main.storyboard in Resources */,

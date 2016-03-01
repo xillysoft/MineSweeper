@@ -28,6 +28,7 @@ typedef NS_ENUM(NSInteger, PlayerState){
 
 //player board object
 @property(strong) PlayerBoard *playerBoard;
+@property(readonly) int numberOfMinesToLayOnMineBoard;
 
 //plaeyr board view object
 @property(strong) PlayerBoardView *playerBoardView;

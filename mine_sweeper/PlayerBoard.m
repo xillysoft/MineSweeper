@@ -104,7 +104,6 @@
             for(int c=column-1; c<=column+1; c++){
                 if((r>=0 && r<self.rows) && (c>=0 && c<self.columns) && !(r==row && c==column)){
                     CellState cellState = [self cellStateAtRow:r column:c];
-                    NSLog(@"  cellState[%d][%d]=%d", r+1, c+1, cellState);
                     if(cellState == CellStateCovered){ //so that it is not CellStateMarkedAsMine
                         BOOL success = [self uncoverCellAtRow:r column:c];
                         if(! success){
@@ -131,6 +130,7 @@
     if([self cellStateAtRow:row column:column] == CellStateCovered){ //only do uncover covered cells
         
         if([self.mineBoard hasMineAtRow:row column:column]){
+            [self setCellState:CellStateUncovered AtRow:row column:column];
             return FALSE; //player dead.
         }
         

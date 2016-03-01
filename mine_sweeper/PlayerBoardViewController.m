@@ -13,7 +13,7 @@
 #import "CellLocation.h"
 
 @interface PlayerBoardViewController()
-
+@property(readwrite) int numberOfMinesToLayOnMineBoard; //re-define as read-write
 @end
 
 
@@ -44,31 +44,47 @@
     if([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad){ //iPad
         rows = 16;
         columns = 16;
-        numberOfMines = 40;
+        numberOfMines = 60;
     }else if([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone){//iPhone, iPod Touch
         rows = 9;
         columns = 9;
-        numberOfMines = 10;
+        numberOfMines = 20;
     }
     MineBoard *mineBoard = [[MineBoard alloc] initWithRows:rows columns:columns];
     self.playerBoard = [[PlayerBoard alloc] initWithMineBoard:mineBoard];
 
     //TODO: 修改为delegate pattern，由view通过delegate查询data model
     self.playerBoardView.playerBoard = self.playerBoard;
+    self.numberOfMinesToLayOnMineBoard = numberOfMines;
     self.playerBoardView.delegate = self;
 
     //defer lay mines until first user-tap action!
-     [self.playerBoard.mineBoard layMines:numberOfMines];
+//     [self.playerBoard.mineBoard layMines:numberOfMines];
 
 }
 
 
-
-//--delegate--
+#pragma mark - PlayerBoardView delegate method
 -(void)playerBoardView:(PlayerBoardView *)playerBoardView didSingleTapOnCell:(CellLocation *)location
 {
     int row = location.row;
     int column = location.column;
+
+    MineBoard *mineBoard = self.playerBoard.mineBoard;
+    
+    if([mineBoard numberOfMines] == 0){ //mines not laid yet, lay mines now.
+        BOOL minesLaid = NO;
+        while(! minesLaid){
+            [mineBoard layMines:self.numberOfMinesToLayOnMineBoard];
+            //satisfied condition: !hasMine && numberOfMinesAround==0
+            if(! [mineBoard hasMineAtRow:row column:column]){
+                if(! [mineBoard hasMineAroundCellAtRow:row column:column]){
+                    minesLaid = YES;
+                }
+            }
+        };
+    }
+    
     CellState cellState = [self.playerBoard cellStateAtRow:row column:column];
     if(cellState == CellStateCovered){ //Cell is covered
         BOOL hasMine = [self.playerBoard.mineBoard hasMineAtRow:row column:column];

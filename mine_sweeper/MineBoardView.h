@@ -10,6 +10,5 @@
 #import "MineBoard.h"
 
 @interface MineBoardView : UIView
-- (void)setMineBoard:(MineBoard *)mineBoard;
-- (MineBoard *)mineBoard;
+@property(readwrite, nonatomic) MineBoard *mineBoard;
 @end

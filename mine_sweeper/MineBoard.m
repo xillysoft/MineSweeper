@@ -76,6 +76,20 @@
     }
 }
 
+-(BOOL)hasMineAroundCellAtRow:(int)row column:(int)column
+{
+    for(int r=row-1; r<=row+1; r++){
+        for(int c=column-1; c<=column+1; c++){
+            if(!(r==row && c==column) && (r>=0 && r<_rows) && (c>=0 && c<_columns)){
+                if([self hasMineAtRow:r column:c]){
+                    return YES;
+                }
+            }
+        }
+    }
+    return NO;
+}
+
 //TODO: cache these calculated numbers
 -(int)numberOfMinesAroundCellAtRow:(int)row column:(int)column
 {

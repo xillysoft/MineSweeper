@@ -145,8 +145,8 @@
                     CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
                     CGContextFillRect(context, cellRect);
                     
-                    UIImage *mineIcon = [UIImage imageNamed:@"Minesweeper_Icon1.png"];
-                    [mineIcon drawInRect:cellRect blendMode:kCGBlendModeMultiply alpha:1.0];
+                    UIImage *mineIcon = [UIImage imageNamed:@"mine_flag.png"];
+                    [mineIcon drawInRect:cellRect blendMode:kCGBlendModeNormal alpha:1.0];
                 }
                 break;
                     
