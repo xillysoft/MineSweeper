@@ -17,7 +17,7 @@
 @end
 
 
-/*
+/**
  * 初级：9x9, 10 mines
  * 中级：16x16, 40 mines
  * 高级：30x16, 99 mines
@@ -28,7 +28,7 @@
 {
     self.playerBoardView = [[PlayerBoardView alloc] init];
     self.view = self.playerBoardView;
-    self.view.backgroundColor = [UIColor whiteColor];
+    self.view.backgroundColor = [UIColor darkGrayColor];
     
 }
 
@@ -67,7 +67,23 @@
 //--delegate--
 -(void)playerBoardView:(PlayerBoardView *)playerBoardView didSingleTapOnCell:(CellLocation *)location
 {
-    [self.playerBoard checkCellStateAtRow:location.row column:location.column];
+    int row = location.row;
+    int column = location.column;
+    CellState cellState = [self.playerBoard cellStateAtRow:row column:column];
+    if(cellState == CellStateCovered){ //Cell is covered
+        BOOL hasMine = [self.playerBoard.mineBoard hasMineAtRow:row column:column];
+        if(hasMine){ //there is a mine at checked position
+            [self.playerBoard setCellState:CellStateUncovered AtRow:row column:column];
+            //TODO: player state==>dead
+            //            NSLog(@"###There is mine here, player dead!");
+            
+        }else{ //there isn't a mine at checked position cell[row][column]
+            //precondition: cell[row][column]: (1)CellStateCovered (2)!hasMine
+            [self.playerBoard uncoverCellAtRow:row column:column];
+        }
+    }
+
+    
     [playerBoardView setNeedsDisplay]; //change to as [self.delegate reloadData];
 }
 
@@ -98,31 +114,12 @@
                 break;
                 
             case CellStateUncovered:{ //Uncovered, uncover cells around if available
-                //周围实际雷数
-                int numberOfMinesAround = [self.playerBoard.mineBoard numberOfMinesAroundCellAtRow:row column:column];
-                if(numberOfMinesAround == 0){
-                    int rows = self.playerBoard.rows;
-                    int columns = self.playerBoard.columns;
-                    for(int r=row-1; r<=row+1; r++){
-                        for(int c=column-1; c<=column+1; c++){
-                            if((r>=0 && r<rows) && (c>=0 && c<columns) && !(r==row && c==column)){
-                                [self.playerBoard uncoverCellAtRow:r column:c];
-                            }
-                        }
+                    BOOL success = [self.playerBoard uncoverAllNotMarkedAsMineCellsAround:row column:column];
+                    if(! success){
+                        self.playerState = PlayerStateDead;
+                        NSLog(@"--player dead!");
                     }
-                }else{
-                    //周围标记为雷的数目
-                    int numberOfMarkedAsMinesAround = [self.playerBoard numberOfMarkedAsMinesAround:row column:column];
-                    if(numberOfMarkedAsMinesAround == numberOfMinesAround){
-                        //uncover all cells that is not marked as mine
-                        BOOL success = [self.playerBoard uncoverAllNotMarkedAsMineCellsAround:row column:column];
-                        if (! success) {
-                            NSLog(@"--A mine exploded, player dead!");
-                            //TODO: Player dead.
-                        }
-                        [playerBoardView setNeedsDisplay];
-                    }
-                }
+                [self.playerBoardView setNeedsDisplay];
                 }
                 break;
         }

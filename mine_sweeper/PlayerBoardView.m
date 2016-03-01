@@ -6,15 +6,12 @@
 //  Copyright © 2016 赵小健. All rights reserved.
 //
 
-#import "PlayerBoardView.h"
 #import "PlayerBoard.h"
+#import "PlayerBoardView.h"
 #import "CellLocation.h"
 #import "PlayerBoardViewController.h"
 
-@interface PlayerBoardView(){
-
-}
-
+@interface PlayerBoardView()
 
 @end
 

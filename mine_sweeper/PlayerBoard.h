@@ -19,15 +19,33 @@ typedef NS_ENUM(NSInteger, CellState){
 
 @interface PlayerBoard : NSObject
 
--(instancetype)initWithMineBoard:(MineBoard *)mineBoard;
-@property(readonly) MineBoard *mineBoard;
-- (int)rows;
-- (int)columns;
+@property(readonly) int rows;
+@property(readonly) int columns;
+
+-(instancetype)initWithRows:(int)rows columns:(int)columns;
+-(instancetype)initWithMineBoard:(MineBoard *)mineBoard; //TODO: remove this initializer
+@property(strong, readonly) MineBoard *mineBoard;
 - (CellState)cellStateAtRow:(int)row column:(int)column;
 - (void)setCellState:(CellState)state AtRow:(int)row column:(int)column;
+
+/**
+ * return the number of cells that is around cell[row][column] and state being CellStateMarkedAsMine
+ */
 - (int)numberOfMarkedAsMinesAround:(int)row column:(int)column;
+
+/**
+ * uncover all cells around cell[row][column] is not in state CellStateMarkedAsMine
+ * @pre-condition: none
+ */
 - (BOOL)uncoverAllNotMarkedAsMineCellsAround:(int)row column:(int)column;
-- (void)uncoverCellAtRow:(int)row column:(int)column;
-- (void)checkCellStateAtRow:(int)row column:(int)column;
+
+/**
+ * Uncover cell[row][column] and all cells around this cell RECURSIVELY that is covered and has no mine
+ * @pre-condition:
+ *      1. cellState[row][column]==CellStateCovered
+ *      2. not hasMine at cell[row][column]
+ *
+ */
+- (BOOL)uncoverCellAtRow:(int)row column:(int)column;
 @end
 

@@ -9,10 +9,7 @@
 #import "MineBoard.h"
 
 @implementation MineBoard{
-    NSData *_mineBoardData;
-    int _rows;
-    int _columns;
-    int _numberOfMines;
+    NSData *_mineBoardData; //internal mineboard data storage
 }
 
 - (instancetype)initWithRows:(int)rows columns:(int)columns
@@ -25,17 +22,6 @@
     }
     return self;
 }
-
-- (int)rows
-{
-    return _rows;
-}
-
-- (int)columns
-{
-    return _columns;
-}
-
 
 - (void)setMineAtRow:(int)row column:(int)column
 {
@@ -54,6 +40,9 @@
     return cells[row*_columns+column];
 }
 
+/**
+ * lay numOfMines mines randomly
+ */
 - (void)layMines:(int)numOfMines
 {
     _numberOfMines = numOfMines;
@@ -85,33 +74,9 @@
             }
         }
     }
-    
-#ifdef _DEBUG
-    [self printMines];
-#endif
 }
 
--(void)printMines
-{
-    NSLog(@"------------mine board---------------");
-    for(int r=0; r<self.rows ; r++){
-        NSString *line = [NSString string];
-        for(int c=0; c<self.columns; c++){
-            BOOL mine = [self hasMineAtRow:r column:c];
-            line = [line stringByAppendingString:mine ? @"*" : @"0"];
-        }
-        NSLog(@"%@\n", line);
-    }
-    NSLog(@"------------mine board---------------");
-}
-
--(int)numbOfMines
-{
-    return _numberOfMines;
-}
-
-
-//TODO: cache these numbers
+//TODO: cache these calculated numbers
 -(int)numberOfMinesAroundCellAtRow:(int)row column:(int)column
 {
     int count = 0;

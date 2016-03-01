@@ -18,18 +18,23 @@ typedef NS_ENUM(NSInteger, PlayerState){
     PlayerStateDead
 };
 
-@interface PlayerBoardViewController : UIViewController
+/**
+ * PlayerBoardViewController view controller owns the PlayBaord data model and PlayerBoardView view.
+ */
+@interface PlayerBoardViewController : UIViewController <PlayerBoardViewDelegate>
 
 //player state
 @property PlayerState playerState;
 
 //player board object
-@property PlayerBoard *playerBoard;
+@property(strong) PlayerBoard *playerBoard;
 
 //plaeyr board view object
-@property PlayerBoardView *playerBoardView;
+@property(strong) PlayerBoardView *playerBoardView;
 
+//delegate method for PlayerBoardView object to call
 -(void)playerBoardView:(PlayerBoardView *)playerBoardView didSingleTapOnCell:(CellLocation *)location;
+//delegate method for PlayerBoardView object to call
 -(void)playerBoardView:(PlayerBoardView *)playerBoardView didDoubleTapOnCell:(CellLocation *)location;
 
 @end
