@@ -6,6 +6,7 @@
 //  Copyright © 2016 赵小健. All rights reserved.
 //
 
+@import AudioToolbox;
 #import "PlayerBoardViewController.h"
 #import "MineBoard.h"
 #import "PlayerBoard.h"
@@ -90,8 +91,8 @@
         BOOL hasMine = [self.playerBoard.mineBoard hasMineAtRow:row column:column];
         if(hasMine){ //there is a mine at checked position
             [self.playerBoard setCellState:CellStateUncovered AtRow:row column:column];
+            [self playerDidDie];
             //TODO: player state==>dead
-            //            NSLog(@"###There is mine here, player dead!");
             
         }else{ //there isn't a mine at checked position cell[row][column]
             //precondition: cell[row][column]: (1)CellStateCovered (2)!hasMine
@@ -133,7 +134,7 @@
                     BOOL success = [self.playerBoard uncoverAllNotMarkedAsMineCellsAround:row column:column];
                     if(! success){
                         self.playerState = PlayerStateDead;
-                        NSLog(@"--player dead!");
+                        [self playerDidDie];
                     }
                 [self.playerBoardView setNeedsDisplay];
                 }
@@ -142,6 +143,14 @@
     }
 }
 
+-(void)playerDidDie
+{
+    NSLog(@"--Player Dead!");
+    
+//    AudioServicesPlayAlertSound(kSystemSoundID_Vibrate);
+    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate); //vibrate the phone
+
+}
 
 
 @end

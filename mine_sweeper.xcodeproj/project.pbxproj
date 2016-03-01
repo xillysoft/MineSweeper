@@ -22,6 +22,7 @@
 		61D6AC651C82A13C00D6CEF0 /* CellLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 61D6AC641C82A13C00D6CEF0 /* CellLocation.m */; };
 		61D6AC6B1C85E5EB00D6CEF0 /* flagIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 61D6AC681C85E5EB00D6CEF0 /* flagIcon.png */; };
 		61D6AC6C1C85E5EB00D6CEF0 /* mine_flag.png in Resources */ = {isa = PBXBuildFile; fileRef = 61D6AC691C85E5EB00D6CEF0 /* mine_flag.png */; };
+		61D6AC6E1C85EBE200D6CEF0 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61D6AC6D1C85EBE200D6CEF0 /* AudioToolbox.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 		61D6AC641C82A13C00D6CEF0 /* CellLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CellLocation.m; sourceTree = "<group>"; };
 		61D6AC681C85E5EB00D6CEF0 /* flagIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = flagIcon.png; sourceTree = "<group>"; };
 		61D6AC691C85E5EB00D6CEF0 /* mine_flag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mine_flag.png; sourceTree = "<group>"; };
+		61D6AC6D1C85EBE200D6CEF0 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61D6AC6E1C85EBE200D6CEF0 /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +68,7 @@
 		6165A4131C7DF40400BFE8A9 = {
 			isa = PBXGroup;
 			children = (
+				61D6AC6D1C85EBE200D6CEF0 /* AudioToolbox.framework */,
 				6165A41E1C7DF40400BFE8A9 /* mine_sweeper */,
 				6165A41D1C7DF40400BFE8A9 /* Products */,
 			);
