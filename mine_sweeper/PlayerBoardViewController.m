@@ -118,8 +118,8 @@
             }
                 break;
                 
-            case CellStateMarkedAsMine:{ //MarkedAsMine==>Uncertain
-                [self.playerBoard setCellState:CellStateMarkedAsUncertain AtRow:row column:column];
+            case CellStateMarkedAsMine:{ //MarkedAsMine==>Covered
+                [self.playerBoard setCellState:CellStateCovered AtRow:row column:column];
                 [playerBoardView setNeedsDisplay];
             }
                 break;
@@ -140,6 +140,21 @@
                 }
                 break;
         }
+    }
+}
+
+//--delegate
+-(void)playerBoardView:(PlayerBoardView *)playerBoardView didLongPressOnCell:(CellLocation *)location
+{
+    int row = location.row;
+    int column = location.column;
+    CellState state = [self.playerBoard cellStateAtRow:row column:column];
+    if(state == CellStateCovered){ //Covered==>Uncertain
+        [self.playerBoard setCellState:CellStateMarkedAsUncertain AtRow:row column:column];
+        [self.playerBoardView setNeedsDisplay];
+    }else if (state == CellStateMarkedAsUncertain){ //Uncertain==>Covered
+        [self.playerBoard setCellState:CellStateCovered AtRow:row column:column];
+        [self.playerBoardView setNeedsDisplay];
     }
 }
 

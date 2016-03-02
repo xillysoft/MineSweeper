@@ -30,4 +30,9 @@
     return self;
 }
 
+-(NSString *)description
+{
+    return [NSString stringWithFormat:@"CellLocation[%d, %d]", self.row, self.column];
+}
+
 @end

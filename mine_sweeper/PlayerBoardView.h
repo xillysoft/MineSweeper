@@ -30,15 +30,16 @@
  *
  * Used by PlayerBoardView to callback
  */
-@protocol PlayerBoardViewDelegate
+@protocol PlayerBoardViewDelegate <NSObject>
 
-@required
+@optional
 //delegate method for PlayerBoardView object to call
 -(void)playerBoardView:(PlayerBoardView *)playerBoardView didSingleTapOnCell:(CellLocation *)location;
 
-@required
+@optional
 //delegate method for PlayerBoardView object to call
 -(void)playerBoardView:(PlayerBoardView *)playerBoardView didDoubleTapOnCell:(CellLocation *)location;
 
-
+@optional
+-(void)playerBoardView:(PlayerBoardView *)playerBoardView didLongPressOnCell:(CellLocation *)location;
 @end

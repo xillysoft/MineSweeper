@@ -49,6 +49,10 @@
     doubleTapRecognizer.numberOfTapsRequired = 2;
     [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
     [self addGestureRecognizer:doubleTapRecognizer];
+    
+    UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGesture:)];
+    longPressRecognizer.numberOfTouchesRequired = 1;
+    [self addGestureRecognizer:longPressRecognizer];
 }
 
 //UITapGestureRecognizer handler
@@ -56,7 +60,7 @@
 {    
     CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
     CellLocation *location = [self cellLocationAtPoint:point];
-    if(location) {
+    if(location && [self.delegate respondsToSelector:@selector(playerBoardView:didSingleTapOnCell:)]) {
         [self.delegate playerBoardView:self didSingleTapOnCell:location];
     }
 }
@@ -67,8 +71,20 @@
 {
     CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
     CellLocation *location = [self cellLocationAtPoint:point];
-    if(location){
+    if(location && [self.delegate respondsToSelector:@selector(playerBoardView:didDoubleTapOnCell:)]){
         [self.delegate playerBoardView:self didDoubleTapOnCell:location];
+    }
+}
+
+-(void)handleLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer
+{
+    //UILongPressGestureRecognizer is a continuous recognizer
+    if(gestureRecognizer.state == UIGestureRecognizerStateEnded){
+        CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
+        CellLocation *location = [self cellLocationAtPoint:point];
+        if(location && [self.delegate respondsToSelector:@selector(playerBoardView:didLongPressOnCell:)]) {
+            [self.delegate playerBoardView:self didLongPressOnCell:location];
+        }
     }
 }
 
