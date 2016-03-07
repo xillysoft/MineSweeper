@@ -51,8 +51,9 @@
         columns = 9;
         numberOfMines = 20;
     }
-    MineBoard *mineBoard = [[MineBoard alloc] initWithRows:rows columns:columns];
-    self.playerBoard = [[PlayerBoard alloc] initWithMineBoard:mineBoard];
+//    MineBoard *mineBoard = [[MineBoard alloc] initWithRows:rows columns:columns];
+//    self.playerBoard = [[PlayerBoard alloc] initWithMineBoard:mineBoard];
+    self.playerBoard = [[PlayerBoard alloc] initWithRows:rows columns:columns];
 
     //TODO: 修改为delegate pattern，由view通过delegate查询data model
     self.playerBoardView.playerBoard = self.playerBoard;
@@ -64,6 +65,26 @@
 
 }
 
+-(BOOL)ensureMinesLaiedOnMineBoard:(int)row column:(int)column
+{
+    //Lay mines on mineBoard id not laied yet
+    PlayerBoard *playerBoard = self.playerBoard;
+
+    if([playerBoard numberOfMines] == 0){
+        BOOL minesLaid = NO;
+        while(! minesLaid){
+            [playerBoard layMines:self.numberOfMinesToLayOnMineBoard];
+            //satisfied condition: !hasMine && numberOfMinesAround==0
+            if(! [playerBoard hasMineAtRow:row column:column]){
+                if(! [playerBoard hasMineAroundCellAtRow:row column:column]){
+                    minesLaid = YES;
+                }
+            }
+        };
+        return NO;
+    }
+    return YES;
+}
 
 #pragma mark - PlayerBoardView delegate method
 -(void)playerBoardView:(PlayerBoardView *)playerBoardView didSingleTapOnCell:(CellLocation *)location
@@ -71,40 +92,28 @@
     int row = location.row;
     int column = location.column;
 
-    MineBoard *mineBoard = self.playerBoard.mineBoard;
+    [self ensureMinesLaiedOnMineBoard:row column:column];
     
-    if([mineBoard numberOfMines] == 0){ //mines not laid yet, lay mines now.
-        BOOL minesLaid = NO;
-        while(! minesLaid){
-            [mineBoard layMines:self.numberOfMinesToLayOnMineBoard];
-            //satisfied condition: !hasMine && numberOfMinesAround==0
-            if(! [mineBoard hasMineAtRow:row column:column]){
-                if(! [mineBoard hasMineAroundCellAtRow:row column:column]){
-                    minesLaid = YES;
-                }
-            }
-        };
-    }
-    
+    PlayerBoard *playerBoard = self.playerBoard;
     CellState cellState = [self.playerBoard cellStateAtRow:row column:column];
-    if(cellState == CellStateCovered){ //Cell is covered
-        BOOL hasMine = [self.playerBoard.mineBoard hasMineAtRow:row column:column];
+    if(cellState == CellStateCoveredNoMark){ //Cell is covered
+        BOOL hasMine = [playerBoard hasMineAtRow:row column:column];
         if(hasMine){ //there is a mine at checked position
             [self.playerBoard setCellState:CellStateUncovered AtRow:row column:column];
             [self playerDidDie];
+            [playerBoardView reloadDataAtRow:row column:column];
             //TODO: player state==>dead
             
         }else{ //there isn't a mine at checked position cell[row][column]
-            //precondition: cell[row][column]: (1)CellStateCovered (2)!hasMine
+            //precondition: cell[row][column]: (1)CellStateCoveredNoMark (2)!hasMine
             [self.playerBoard uncoverCellAtRow:row column:column];
+//            [playerBoardView reloadDataAtRow:row column:column];
         }
+        
     }
-
-    
-    [playerBoardView setNeedsDisplay]; //change to as [self.delegate reloadData];
 }
 
-//--delegate
+#pragma mark - PlayerBoardView delegate method
 -(void)playerBoardView:(PlayerBoardView *)playerBoardView didDoubleTapOnCell:(CellLocation *)location
 {
     {
@@ -112,20 +121,20 @@
         int column = location.column;
         CellState state = [self.playerBoard cellStateAtRow:row column:column];
         switch(state){
-            case CellStateCovered:{ //Covered==>MarkedAsMine
-                [self.playerBoard setCellState:CellStateMarkedAsMine AtRow:row column:column];
+            case CellStateCoveredNoMark:{ //Covered==>MarkedAsMine
+                [self.playerBoard setCellState:CellStateCoveredMarkedAsMine AtRow:row column:column];
                 [playerBoardView setNeedsDisplay];
             }
                 break;
                 
-            case CellStateMarkedAsMine:{ //MarkedAsMine==>Covered
-                [self.playerBoard setCellState:CellStateCovered AtRow:row column:column];
+            case CellStateCoveredMarkedAsMine:{ //MarkedAsMine==>Covered
+                [self.playerBoard setCellState:CellStateCoveredNoMark AtRow:row column:column];
                 [playerBoardView setNeedsDisplay];
             }
                 break;
                 
-            case CellStateMarkedAsUncertain:{ //Uncertain==>Covered
-                [self.playerBoard setCellState:CellStateCovered AtRow:row column:column];
+            case CellStateCoveredMarkedAsUncertain:{ //Uncertain==>Covered
+                [self.playerBoard setCellState:CellStateCoveredNoMark AtRow:row column:column];
                 [playerBoardView setNeedsDisplay];
             }
                 break;
@@ -143,17 +152,17 @@
     }
 }
 
-//--delegate
+#pragma mark - PlayerBoardView delegate method
 -(void)playerBoardView:(PlayerBoardView *)playerBoardView didLongPressOnCell:(CellLocation *)location
 {
     int row = location.row;
     int column = location.column;
     CellState state = [self.playerBoard cellStateAtRow:row column:column];
-    if(state == CellStateCovered){ //Covered==>Uncertain
-        [self.playerBoard setCellState:CellStateMarkedAsUncertain AtRow:row column:column];
+    if(state == CellStateCoveredNoMark){ //Covered==>Uncertain
+        [self.playerBoard setCellState:CellStateCoveredMarkedAsUncertain AtRow:row column:column];
         [self.playerBoardView setNeedsDisplay];
-    }else if (state == CellStateMarkedAsUncertain){ //Uncertain==>Covered
-        [self.playerBoard setCellState:CellStateCovered AtRow:row column:column];
+    }else if (state == CellStateCoveredMarkedAsUncertain){ //Uncertain==>Covered
+        [self.playerBoard setCellState:CellStateCoveredNoMark AtRow:row column:column];
         [self.playerBoardView setNeedsDisplay];
     }
 }

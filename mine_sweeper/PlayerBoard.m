@@ -20,7 +20,7 @@
     NSMutableData *_playerBoardData;
 }
 
--(instancetype)initWithRows:(int)rows columns:(int)columns
+- (instancetype)initWithRows:(int)rows columns:(int)columns
 {
     self = [super init];
     if(self){
@@ -32,17 +32,17 @@
     return self;
 }
 
-- (instancetype)initWithMineBoard:(MineBoard *)mineBoard
-{
-    self = [super init];
-    if(self){
-        _mineBoard = mineBoard;
-        _rows = mineBoard.rows;
-        _columns = mineBoard.columns;
-        [self createPlayBoardData];
-    }
-    return self;
-}
+//- (instancetype)initWithMineBoard:(MineBoard *)mineBoard
+//{
+//    self = [super init];
+//    if(self){
+//        _mineBoard = mineBoard;
+//        _rows = mineBoard.rows;
+//        _columns = mineBoard.columns;
+//        [self createPlayBoardData];
+//    }
+//    return self;
+//}
 
 -(void)createPlayBoardData
 {
@@ -51,8 +51,37 @@
     _playerBoardData = [NSMutableData dataWithLength:rows*columns*sizeof(CellState)];
     CellState *cellStates = (CellState *)[_playerBoardData bytes];
     for(int i=0; i<rows*columns; i++){
-        cellStates[i] = CellStateCovered;
+        cellStates[i] = CellStateCoveredNoMark;
     }
+}
+
+//delegate to mineBoard
+-(BOOL)hasMineAtRow:(int)row column:(int)column
+{
+    return [self.mineBoard hasMineAtRow:row column:column];
+}
+
+//delegate to mineBoard
+-(BOOL)hasMineAroundCellAtRow:(int)row column:(int)column
+{
+    return [self.mineBoard hasMineAroundCellAtRow:row column:column];
+}
+
+//delegate to mineBoard
+-(int)numberOfMinesAroundCellAtRow:(int)row column:(int)column
+{
+    return [self.mineBoard numberOfMinesAroundCellAtRow:row column:column];
+}
+
+//delegate to mineBoard
+-(void)layMines:(int)numOfMines
+{
+    [self.mineBoard layMines:numOfMines];
+}
+
+-(int)numberOfMines
+{
+    return [self.mineBoard numberOfMines];
 }
 
 /** cell state of plyaer
@@ -70,7 +99,7 @@
 }
 
 /**
- * The number of cells that is of CellStateMarkedAsMine around cell[row][column]
+ * The number of cells that is of CellStateCoveredMarkedAsMine around cell[row][column]
  */
 - (int)numberOfMarkedAsMinesAround:(int)row column:(int)column
 {
@@ -78,7 +107,7 @@
     for(int r=row-1; r<=row+1; r++){
         for(int c=column-1; c<=column+1; c++){
             if((r>=0 && r<self.rows) && (c>=0 && c<self.columns) && !(r==row && c==column)){
-                if([self cellStateAtRow:r column:c] == CellStateMarkedAsMine){
+                if([self cellStateAtRow:r column:c] == CellStateCoveredMarkedAsMine){
                     count++;
                 }
             }
@@ -88,7 +117,7 @@
 }
 
 /** 
- * uncover all cells around cell[row][column] is not in state CellStateMarkedAsMine
+ * uncover all cells around cell[row][column] is not in state CellStateCoveredMarkedAsMine
  * @pre-condition: none
  */
 - (BOOL)uncoverAllNotMarkedAsMineCellsAround:(int)row column:(int)column
@@ -104,7 +133,7 @@
             for(int c=column-1; c<=column+1; c++){
                 if((r>=0 && r<self.rows) && (c>=0 && c<self.columns) && !(r==row && c==column)){
                     CellState cellState = [self cellStateAtRow:r column:c];
-                    if(cellState == CellStateCovered){ //so that it is not CellStateMarkedAsMine
+                    if(cellState == CellStateCoveredNoMark){ //so that it is not CellStateCoveredMarkedAsMine
                         BOOL success = [self uncoverCellAtRow:r column:c];
                         if(! success){
                             return FALSE;
@@ -121,14 +150,13 @@
 /**
  * Uncover cell[row][column] and all cells around this cell RECURSIVELY that is covered and has no mine
  * @pre-condition: 
- *      1. cellState[row][column]==CellStateCovered
+ *      1. cellState[row][column]==CellStateCoveredNoMark
  *      2. not hasMine at cell[row][column], or else return FALSE.
  *
  */
 - (BOOL)uncoverCellAtRow:(int)row column:(int)column
 {
-    if([self cellStateAtRow:row column:column] == CellStateCovered){ //only do uncover covered cells
-        
+    if([self cellStateAtRow:row column:column] == CellStateCoveredNoMark){ //only do uncover covered cells
         if([self.mineBoard hasMineAtRow:row column:column]){
             [self setCellState:CellStateUncovered AtRow:row column:column];
             return FALSE; //player dead.

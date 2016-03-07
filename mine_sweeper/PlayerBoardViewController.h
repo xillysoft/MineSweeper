@@ -13,7 +13,7 @@
 #import "CellLocation.h"
 
 typedef NS_ENUM(NSInteger, PlayerState){
-    PlayerStateInit, //initial state
+    PlayerStateInit, //initial state, no first tap yet
     PlayerStateAlive,
     PlayerStateDead
 };

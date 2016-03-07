@@ -92,12 +92,12 @@
 {
     
     CGRect bounds = self.bounds;
-    MineBoard *mineBoard = self.playerBoard.mineBoard;
-    CGFloat hSize = bounds.size.width/mineBoard.columns;
-    CGFloat vSize = bounds.size.height/mineBoard.rows;
+    PlayerBoard *playerBoard = self.playerBoard;
+    CGFloat hSize = bounds.size.width/playerBoard.columns;
+    CGFloat vSize = bounds.size.height/playerBoard.rows;
     CGFloat size = MIN(hSize, vSize);
-    int columns = mineBoard.columns;
-    int rows = mineBoard.rows;
+    int columns = playerBoard.columns;
+    int rows = playerBoard.rows;
     CGFloat x0 = (bounds.size.width-size*columns)/2; //必须和-drawRect:方法相对应
     CGFloat y0 = (bounds.size.height-size*rows)/2;
     point.x -= x0;
@@ -111,18 +111,34 @@
     }
 }
 
+
+-(void)reloadData
+{
+    [self setNeedsDisplay];
+}
+
+-(void)reloadDataAtRow:(int)row column:(int)column
+{
+    [self setNeedsDisplay];
+}
+
+-(void)reloadDataInLocations:(NSArray<CellLocation *> *)locations
+{
+    [self setNeedsDisplay];
+}
+
 - (void)drawRect:(CGRect)rect
 {
     if(self.playerBoard == nil)
         return;
     
     CGRect bounds = self.bounds;
-    MineBoard *mineBoard = self.playerBoard.mineBoard;
-    CGFloat hSize = bounds.size.width/mineBoard.columns;
-    CGFloat vSize = bounds.size.height/mineBoard.rows;
+    PlayerBoard *playerBoard = self.playerBoard;
+    CGFloat hSize = bounds.size.width/playerBoard.columns;
+    CGFloat vSize = bounds.size.height/playerBoard.rows;
     CGFloat size = MIN(hSize, vSize);
-    int columns = mineBoard.columns;
-    int rows = mineBoard.rows;
+    int columns = playerBoard.columns;
+    int rows = playerBoard.rows;
     CGFloat x0 = (bounds.size.width-size*columns)/2;
     CGFloat y0 = (bounds.size.height-size*rows)/2;
     
@@ -141,13 +157,13 @@
             CGRect cellRect = CGRectMake(x, y, size, size);
             CellState state = [self.playerBoard cellStateAtRow:row column:column];
             switch(state){
-                case CellStateCovered:
+                case CellStateCoveredNoMark:
                 {
                     CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
                     CGContextFillRect(context, cellRect);
                     BOOL showHiddenMine = NO;
                     if(showHiddenMine){
-                        if([self.playerBoard.mineBoard hasMineAtRow:row column:column]){
+                        if([playerBoard hasMineAtRow:row column:column]){
                             CGContextSetStrokeColorWithColor(context, [UIColor lightGrayColor].CGColor);
                             CGRect rect1 = CGRectMake(x+size/4, y+size/4, size/2, size/2);
                             CGContextStrokeEllipseInRect(context, rect1);
@@ -156,7 +172,7 @@
                 }
                 break;
                     
-                case CellStateMarkedAsMine:
+                case CellStateCoveredMarkedAsMine:
                 {
                     CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
                     CGContextFillRect(context, cellRect);
@@ -166,7 +182,7 @@
                 }
                 break;
                     
-                case CellStateMarkedAsUncertain:
+                case CellStateCoveredMarkedAsUncertain:
                 {
                     CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
                     CGContextFillRect(context, cellRect);
@@ -183,14 +199,14 @@
                 {
                     CGContextSetFillColorWithColor(context, [UIColor lightGrayColor].CGColor);
                     CGContextFillRect(context, cellRect);
-                    if([mineBoard hasMineAtRow:row column:column]){
+                    if([playerBoard hasMineAtRow:row column:column]){
                         CGContextSetFillColorWithColor(context, [UIColor redColor].CGColor);
                         CGContextFillRect(context, cellRect);
                         
                         UIImage *mineIcon = [UIImage imageNamed:@"Minesweeper_Icon1.png"];
                         [mineIcon drawInRect:cellRect blendMode:kCGBlendModeMultiply alpha:1.0];
                     }else{
-                        int numberOfMinesAround = [mineBoard numberOfMinesAroundCellAtRow:row column:column];
+                        int numberOfMinesAround = [playerBoard numberOfMinesAroundCellAtRow:row column:column];
                         if(numberOfMinesAround > 0){
                             NSString *text = [NSString stringWithFormat:@"%d", numberOfMinesAround];
                             CGSize textSize = [text sizeWithAttributes:attribs];
