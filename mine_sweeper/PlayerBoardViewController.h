@@ -21,7 +21,7 @@ typedef NS_ENUM(NSInteger, PlayerState){
 /**
  * PlayerBoardViewController view controller owns the PlayBaord data model and PlayerBoardView view.
  */
-@interface PlayerBoardViewController : UIViewController <PlayerBoardViewDelegate>
+@interface PlayerBoardViewController : UIViewController <IPlayerBoardDelegate, IPlayerBoardViewDelegate>
 
 //player state
 @property PlayerState playerState;

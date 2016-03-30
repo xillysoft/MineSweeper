@@ -12,6 +12,7 @@
 
 @interface PlayerBoard()
 @property(readwrite) MineBoard *mineBoard;
+-(void)createPlayBoardData;
 @end
 
 @implementation PlayerBoard{
@@ -75,6 +76,7 @@
 -(void)layMines:(int)numOfMines
 {
     [self.mineBoard layMines:numOfMines];
+    [self.delegate minesLaidOnMineBoard:numOfMines]; //notify listener that mines laied on the mineboard
 }
 
 -(int)numberOfMines
@@ -99,7 +101,7 @@
 /**
  * The number of cells that is of CellStateCoveredMarkedAsMine around cell[row][column]
  */
-- (int)numberOfMarkedAsMinesAround:(int)row column:(int)column
+- (int)numberOfMarkedAsMinesAroundRow:(int)row column:(int)column
 {
     int count=0;
     for(int r=row-1; r<=row+1; r++){
@@ -124,9 +126,9 @@
     int numberOfMinesAround = [self.mineBoard numberOfMinesAroundCellAtRow:row column:column];
 
     //周围标记为雷的数目
-    int numberOfMarkedAsMinesAround = [self numberOfMarkedAsMinesAround:row column:column];
+    int numberOfMarkedAsMinesAround = [self numberOfMarkedAsMinesAroundRow:row column:column];
     if(numberOfMarkedAsMinesAround == numberOfMinesAround){
-        //uncover all cells that is not marked as mine
+        //uncover周围所有未标记为雷的单元
         for(int r=row-1; r<=row+1; r++){
             for(int c=column-1; c<=column+1; c++){
                 if((r>=0 && r<self.rows) && (c>=0 && c<self.columns) && !(r==row && c==column)){
@@ -154,18 +156,22 @@
  */
 - (BOOL)uncoverCellAtRow:(int)row column:(int)column
 {
-    if([self cellStateAtRow:row column:column] == CellStateCoveredNoMark){ //only do uncover covered cells
-        if([self.mineBoard hasMineAtRow:row column:column]){
+    if([self cellStateAtRow:row column:column] == CellStateCoveredNoMark){ //单元未打开并且未标记为雷
+        //尝试打开该单元格
+        if([self.mineBoard hasMineAtRow:row column:column]){ //该单元格下面是雷，失败
             [self setCellState:CellStateUncovered AtRow:row column:column];
+            [self.delegate mineDidExplodAtRow:row column:column]; //notify listener that mine exploded
             return FALSE; //player dead.
         }
         
         //not has mine, set state to Uncovered
         [self setCellState:CellStateUncovered AtRow:row column:column]; //uncover cell[row][column]
+        //notify listener that a cell uncovered without mine under it
+        [self.delegate cellDidUncoverAtRow:row column:column];
         
-        //process cells around cell[row][column]
+        //try to sweep cells around cell[row][column] recursively
         int numberOfMinesAround = [self.mineBoard numberOfMinesAroundCellAtRow:row column:column];
-        int numberOfMarkedAsMinesAround = [self numberOfMarkedAsMinesAround:row column:column];
+        int numberOfMarkedAsMinesAround = [self numberOfMarkedAsMinesAroundRow:row column:column];
         if(numberOfMinesAround == numberOfMarkedAsMinesAround){ //there isn't mine around cell[row][column]
             for(int r=row-1; r<=row+1; r++){
                 for(int c=column-1; c<=column+1; c++){
