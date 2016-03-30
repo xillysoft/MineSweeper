@@ -31,6 +31,15 @@
  */
 @implementation GameViewController
 
+-(void)checkIfWin
+{
+    //test whether all mines swept
+    int numberOfMinesCorvered = self.playerBoard.rows*self.playerBoard.columns-_numberOfMinesUncovered;
+    if(numberOfMinesCorvered==_numberOfMinesLaied
+       && _numberOfMinesMarkedAsMine==_numberOfMinesLaied){
+        [self playerDidWin];
+    }
+}
 
 #pragma mark IPlayerBoardDelegate
 //mineboard上已布雷
@@ -51,6 +60,8 @@
     if(newState==CellStateCoveredMarkedAsMine){
         _numberOfMinesMarkedAsMine++;
     }
+    
+    [self checkIfWin];
 }
 
 //打开了一个无雷的单元格
@@ -59,12 +70,7 @@
     [self.playerBoardView cellDidUncoverAtRow:row column:column];
     
     _numberOfMinesUncovered++;
-    //test whether all mines swept
-    int numberOfMinesCorvered = self.playerBoard.rows*self.playerBoard.columns-_numberOfMinesUncovered;
-    if(numberOfMinesCorvered==_numberOfMinesLaied
-       && _numberOfMinesMarkedAsMine==_numberOfMinesLaied){
-        [self playerDidWin];
-    }
+    [self checkIfWin];
 }
 
 //打开了一个有雷的单元格

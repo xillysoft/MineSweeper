@@ -125,7 +125,7 @@
 -(void)cellMarkChangedFrom:(CellState)oldState to:(CellState)newState atRow:(int)row column:(int)column;
 {
 #ifdef DEBUG
-    NSLog(@"--PlayerBoardView::cell[%d][%d] MarkChangedFrom:%ld to:%ld!", row, column, oldState, (long)newState);
+    NSLog(@"--PlayerBoardView::cell[%d][%d] MarkChangedFrom:%ld to:%ld!", row, column, (long)oldState, (long)newState);
 #endif
     [self setNeedsDisplay];
 }
