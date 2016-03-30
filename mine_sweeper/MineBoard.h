@@ -9,8 +9,17 @@
 #import <Foundation/Foundation.h>
 
 @interface MineBoard : NSObject
+/**
+ * number of row in the mineboard
+ */
 @property(readonly) int rows;
+/**
+ * number of columns in the mineboard
+ */
 @property(readonly) int columns;
+/**
+ * number of mines layed.
+ */
 @property(readonly) int numberOfMines;
 
 /**
@@ -19,12 +28,15 @@
  */
 - (instancetype)initWithRows:(int)rows columns:(int)columns;
 
+/**
+ * get and set mine at location (row, column)
+ */
 - (void)setMineAtRow:(int)row column:(int)column;
 - (void)clearMineAtRow:(int)row column:(int)column;
 - (BOOL)hasMineAtRow:(int)row column:(int)column;
 
 /**
- * lay numberOfMines mines on this MineBoard randomly
+ * lay randomly numOfMines mines in the rows*columns mineboard
  */
 - (void)layMines:(int)numOfMines;
 /**

@@ -11,8 +11,6 @@
 #import "MineBoard.h"
 
 @interface PlayerBoard()
-@property(readwrite) int rows;
-@property(readwrite) int columns;
 @property(readwrite) MineBoard *mineBoard;
 @end
 

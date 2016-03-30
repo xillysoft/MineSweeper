@@ -11,9 +11,9 @@
 
 typedef NS_ENUM(NSInteger, CellState){
     CellStateCoveredNoMark, //覆盖，不可见
-    CellStateUncovered, //点击开，无雷;对于无雷的单元个，在其上显示周围雷数目
     CellStateCoveredMarkedAsMine, //标记为雷
     CellStateCoveredMarkedAsUncertain, //标记为不确定
+    CellStateUncovered //点击开，无雷;对于无雷的单元个，在其上显示周围雷数目
 };
 
 
@@ -61,7 +61,7 @@ typedef NS_ENUM(NSInteger, CellState){
 - (int)numberOfMarkedAsMinesAround:(int)row column:(int)column;
 
 /**
- * uncover all cells around cell[row][column] is not in state CellStateCoveredMarkedAsMine
+ * uncover all cells around cell[row][column] that is not in state CellStateCoveredMarkedAsMine
  * @pre-condition: none
  */
 - (BOOL)uncoverAllNotMarkedAsMineCellsAround:(int)row column:(int)column;
@@ -74,5 +74,6 @@ typedef NS_ENUM(NSInteger, CellState){
  *
  */
 - (BOOL)uncoverCellAtRow:(int)row column:(int)column;
+
 @end
 

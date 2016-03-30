@@ -8,6 +8,10 @@
 
 #import "MineBoard.h"
 
+@interface MineBoard()
+@property(readwrite) int numberOfMines; //redefine numberOfMines as readwrite attribute
+@end
+
 @implementation MineBoard{
     NSData *_mineBoardData; //internal mineboard data storage
 }
@@ -41,11 +45,11 @@
 }
 
 /**
- * lay numOfMines mines randomly
+ * lay randomly numOfMines mines in the rows*columns mineboard
  */
 - (void)layMines:(int)numOfMines
 {
-    _numberOfMines = numOfMines;
+    self.numberOfMines = numOfMines;
 
     for(int r=0; r<_rows; r++){
         for(int c=0; c<_columns ; c++){
