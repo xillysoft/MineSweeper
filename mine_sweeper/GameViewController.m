@@ -116,7 +116,7 @@
 
     [self ensureMinesLaiedOnMineBoard:row column:column];
     
-    [self.playerBoard tryUncoverCellAtRow:row column:column];
+    [self.playerBoard tryUncoverCellAtRow:row column:column recursive:NO];
 
 }
 
@@ -129,19 +129,19 @@
         CellState state = [self.playerBoard cellStateAtRow:row column:column];
         switch(state){
             case CellStateCoveredNoMark:{ //Covered==>MarkedAsMine
-                [self.playerBoard setCellState:CellStateCoveredMarkedAsMine AtRow:row column:column];
+                [self.playerBoard setCellMarkFrom:CellStateCoveredNoMark toNewMark:CellStateCoveredMarkedAsMine atRow:row column:column];
                 [playerBoardView cellMarkChangedFrom:CellStateCoveredNoMark to:CellStateCoveredMarkedAsMine];
             }
                 break;
                 
-            case CellStateCoveredMarkedAsMine:{ //MarkedAsMine==>Covered
-                [self.playerBoard setCellState:CellStateCoveredNoMark AtRow:row column:column];
+            case CellStateCoveredMarkedAsMine:{ //MarkedAsMine==>CoveredNoMark
+                [self.playerBoard setCellMarkFrom:CellStateCoveredMarkedAsMine toNewMark:CellStateCoveredNoMark atRow:row column:column];
                 [playerBoardView cellMarkChangedFrom:CellStateCoveredMarkedAsMine to:CellStateCoveredNoMark];
             }
                 break;
                 
-            case CellStateCoveredMarkedAsUncertain:{ //Uncertain==>Covered
-                [self.playerBoard setCellState:CellStateCoveredNoMark AtRow:row column:column];
+            case CellStateCoveredMarkedAsUncertain:{ //Uncertain==>CoveredNoMark
+                [self.playerBoard setCellMarkFrom:CellStateCoveredMarkedAsUncertain toNewMark:CellStateCoveredNoMark atRow:row column:column];
                 [playerBoardView cellMarkChangedFrom:CellStateCoveredMarkedAsUncertain to:CellStateCoveredNoMark];
             }
                 break;
@@ -161,10 +161,10 @@
     int column = location.column;
     CellState state = [self.playerBoard cellStateAtRow:row column:column];
     if(state == CellStateCoveredNoMark){ //Covered==>Uncertain
-        [self.playerBoard setCellState:CellStateCoveredMarkedAsUncertain AtRow:row column:column];
+        [self.playerBoard setCellMark:CellStateCoveredMarkedAsUncertain atRow:row column:column];
         [self.playerBoardView cellMarkChangedFrom:CellStateCoveredNoMark to:CellStateCoveredMarkedAsUncertain];
     }else if (state == CellStateCoveredMarkedAsUncertain){ //Uncertain==>Covered
-        [self.playerBoard setCellState:CellStateCoveredNoMark AtRow:row column:column];
+        [self.playerBoard setCellMark:CellStateCoveredNoMark atRow:row column:column];
         [self.playerBoardView cellMarkChangedFrom:CellStateCoveredMarkedAsUncertain to:CellStateCoveredNoMark];
     }
 }

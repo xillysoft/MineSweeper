@@ -12,6 +12,7 @@
 
 @interface PlayerBoard()
 @property(readwrite) MineBoard *mineBoard;
+- (void)setCellState:(CellState)state AtRow:(int)row column:(int)column;
 -(void)createPlayBoardData;
 -(void)layMines:(int)numOfMines;
 @end
@@ -114,6 +115,12 @@
     cells[row*self.columns+column] = state;
 }
 
+-(void)setCellMarkFrom:(CellState)oldStateMark toNewMark:(CellState)stateMark atRow:(int)row column:(int)column
+{
+    [self setCellState:stateMark AtRow:row column:column];
+    [self.delegate cellMarkChangedFrom:oldStateMark to:stateMark];
+}
+
 /**
  * The number of cells that is of CellStateCoveredMarkedAsMine around cell[row][column]
  */
@@ -132,7 +139,7 @@
     return count;
 }
 
--(void)tryUncoverCellAtRow:(int)row column:(int)column
+-(void)tryUncoverCellAtRow:(int)row column:(int)column recursive:(BOOL)recursive
 {
     CellState cellState = [self cellStateAtRow:row column:column];
     if(cellState == CellStateCoveredNoMark){ //Cell is covered
@@ -140,9 +147,16 @@
         if(hasMine){ //there is a mine at checked position
             [self setCellState:CellStateUncovered AtRow:row column:column];
             [self.delegate mineDidExplodAtRow:row column:column];            
-        }else{ //there isn't a mine at checked position cell[row][column]
+        }else{ //there isn't a mine at [row][column]
             //precondition: cell[row][column]: (1)CellStateCoveredNoMark (2)!hasMine
-            [self uncoverCellAtRow:row column:column];
+            if(! recursive){ //uncover this cell only
+                //not has mine, set state to Uncovered
+                [self setCellState:CellStateUncovered AtRow:row column:column]; //uncover cell[row][column]
+                //notify listener that a cell uncovered without mine under it
+                [self.delegate cellDidUncoverAtRow:row column:column];
+            }else{
+                [self uncoverCellAtRow:row column:column];
+            }
         }
         
     }
@@ -195,7 +209,7 @@
             return FALSE; //player dead.
         }
         
-        //not has mine, set state to Uncovered
+        //has no mine, set state to Uncovered
         [self setCellState:CellStateUncovered AtRow:row column:column]; //uncover cell[row][column]
         //notify listener that a cell uncovered without mine under it
         [self.delegate cellDidUncoverAtRow:row column:column];

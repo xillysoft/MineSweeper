@@ -47,9 +47,9 @@
 /**
  * lay randomly numOfMines mines in the rows*columns mineboard
  */
-- (void)layMines:(int)numOfMines
+- (void)layMines:(int)numOfMinesToLay
 {
-    self.numberOfMines = numOfMines;
+    self.numberOfMines = numOfMinesToLay;
 
     for(int r=0; r<_rows; r++){
         for(int c=0; c<_columns ; c++){
@@ -59,7 +59,7 @@
 
     //lay numOfMines mines on rows*columns board
     int numCells = self.rows*self.columns;
-    for(int i=0; i<numOfMines; i++){
+    for(int i=0; i<numOfMinesToLay; i++){
         //在剩下的(numCells-i)个空白单元格中随机选择一个位置pos布雷
         int pos = arc4random_uniform(numCells-i); //pos: [0..numOfMines-i-1]
         

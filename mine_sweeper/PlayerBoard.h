@@ -66,14 +66,18 @@ typedef NS_ENUM(NSInteger, CellState){
 //-(instancetype)initWithMineBoard:(MineBoard *)mineBoard; //mineBoard is private to PlayerBoard
 
 - (CellState)cellStateAtRow:(int)row column:(int)column;
-- (void)setCellState:(CellState)state AtRow:(int)row column:(int)column;
+/**
+ * 标记雷
+ * stateMark:={CellStateCorveredNoMark, CellStateCorveredMarkedAsMine, CellStateCoveredMarkedAsUncertain}
+ */
+-(void)setCellMarkFrom:(CellState)oldStateMark toNewMark:(CellState)stateMark atRow:(int)row column:(int)column;
 
 /**
  * return the number of cells that is around cell[row][column] and state being CellStateCoveredMarkedAsMine
  */
 - (int)numberOfMarkedAsMinesAroundRow:(int)row column:(int)column;
 
--(void)tryUncoverCellAtRow:(int)row column:(int)column;
+-(void)tryUncoverCellAtRow:(int)row column:(int)column recursive:(BOOL)recursive;
 
 /**
  * uncover all cells around cell[row][column] that is not in state CellStateCoveredMarkedAsMine

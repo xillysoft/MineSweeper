@@ -60,7 +60,7 @@
 {    
     CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
     CellLocation *location = [self cellLocationAtPoint:point];
-    if(location && [self.delegate respondsToSelector:@selector(playerBoardView:didSingleTapOnCell:)]) {
+    if(location && [self.delegate respondsToSelector:@selector(player:didSingleTapOnCell:)]) {
         [self.delegate player:self didSingleTapOnCell:location];
     }
 }
@@ -71,7 +71,7 @@
 {
     CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
     CellLocation *location = [self cellLocationAtPoint:point];
-    if(location && [self.delegate respondsToSelector:@selector(playerBoardView:didDoubleTapOnCell:)]){
+    if(location && [self.delegate respondsToSelector:@selector(player:didDoubleTapOnCell:)]){
         [self.delegate player:self didDoubleTapOnCell:location];
     }
 }
@@ -83,7 +83,7 @@
     if(gestureRecognizer.state == UIGestureRecognizerStateEnded){
         CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
         CellLocation *location = [self cellLocationAtPoint:point];
-        if(location && [self.delegate respondsToSelector:@selector(playerBoardView:didLongPressOnCell:)]) {
+        if(location && [self.delegate respondsToSelector:@selector(player:didLongPressOnCell:)]) {
             [self.delegate player:self didLongPressOnCell:location];
         }
     }

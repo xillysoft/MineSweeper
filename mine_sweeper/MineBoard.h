@@ -38,7 +38,7 @@
 /**
  * lay randomly numOfMines mines in the rows*columns mineboard
  */
-- (void)layMines:(int)numOfMines;
+- (void)layMines:(int)numOfMinesToLay;
 /**
  * return whether there is a cell with mine around cell[row][column]
  */
