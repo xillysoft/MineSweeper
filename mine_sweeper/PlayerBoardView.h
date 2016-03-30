@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 @class PlayerBoard;
-@class PlayerBoardViewController;
+@class GameViewController;
 @class CellLocation;
 @protocol IPlayerBoardViewDelegate;
 
@@ -35,12 +35,12 @@
 
 @optional
 //delegate method for PlayerBoardView object to call
--(void)playerBoardView:(PlayerBoardView *)playerBoardView didSingleTapOnCell:(CellLocation *)location;
+-(void)player:(PlayerBoardView *)playerBoardView didSingleTapOnCell:(CellLocation *)location;
 
 @optional
 //delegate method for PlayerBoardView object to call
--(void)playerBoardView:(PlayerBoardView *)playerBoardView didDoubleTapOnCell:(CellLocation *)location;
+-(void)player:(PlayerBoardView *)playerBoardView didDoubleTapOnCell:(CellLocation *)location;
 
 @optional
--(void)playerBoardView:(PlayerBoardView *)playerBoardView didLongPressOnCell:(CellLocation *)location;
+-(void)player:(PlayerBoardView *)playerBoardView didLongPressOnCell:(CellLocation *)location;
 @end

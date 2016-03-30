@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "PlayerBoardViewController.h"
+#import "GameViewController.h"
 
 @interface AppDelegate ()
 
@@ -20,7 +20,7 @@
     // Override point for customization after application launch.
     CGRect frame = [UIScreen mainScreen].bounds;
     self.window = [[UIWindow alloc] initWithFrame:frame];
-    PlayerBoardViewController *viewController = [[PlayerBoardViewController alloc] init];
+    GameViewController *viewController = [[GameViewController alloc] init];
     self.window.rootViewController = viewController;
     [self.window makeKeyAndVisible];
     return YES;

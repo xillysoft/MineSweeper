@@ -95,7 +95,7 @@
     [self.mineBoard layMines:numOfMines];
 }
 
--(int)numberOfMines
+-(int)numberOfMinesLaid
 {
     return [self.mineBoard numberOfMines];
 }

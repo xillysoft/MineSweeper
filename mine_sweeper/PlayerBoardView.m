@@ -9,7 +9,7 @@
 #import "PlayerBoard.h"
 #import "PlayerBoardView.h"
 #import "CellLocation.h"
-#import "PlayerBoardViewController.h"
+#import "GameViewController.h"
 
 @interface PlayerBoardView()
 
@@ -61,7 +61,7 @@
     CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
     CellLocation *location = [self cellLocationAtPoint:point];
     if(location && [self.delegate respondsToSelector:@selector(playerBoardView:didSingleTapOnCell:)]) {
-        [self.delegate playerBoardView:self didSingleTapOnCell:location];
+        [self.delegate player:self didSingleTapOnCell:location];
     }
 }
 
@@ -72,7 +72,7 @@
     CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
     CellLocation *location = [self cellLocationAtPoint:point];
     if(location && [self.delegate respondsToSelector:@selector(playerBoardView:didDoubleTapOnCell:)]){
-        [self.delegate playerBoardView:self didDoubleTapOnCell:location];
+        [self.delegate player:self didDoubleTapOnCell:location];
     }
 }
 
@@ -84,7 +84,7 @@
         CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
         CellLocation *location = [self cellLocationAtPoint:point];
         if(location && [self.delegate respondsToSelector:@selector(playerBoardView:didLongPressOnCell:)]) {
-            [self.delegate playerBoardView:self didLongPressOnCell:location];
+            [self.delegate player:self didLongPressOnCell:location];
         }
     }
 }

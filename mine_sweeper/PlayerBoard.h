@@ -51,7 +51,7 @@ typedef NS_ENUM(NSInteger, CellState){
 /**
  * return numberOfMines laied
  */
--(int)numberOfMines;
+-(int)numberOfMinesLaid;
 
 /**
  * lay numberOfMines mines on this MineBoard randomly

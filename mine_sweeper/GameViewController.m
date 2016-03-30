@@ -7,13 +7,13 @@
 //
 
 @import AudioToolbox;
-#import "PlayerBoardViewController.h"
+#import "GameViewController.h"
 #import "MineBoard.h"
 #import "PlayerBoard.h"
 #import "PlayerBoardView.h"
 #import "CellLocation.h"
 
-@interface PlayerBoardViewController()
+@interface GameViewController()
 
 @property(readwrite) int numberOfMinesToLayOnMineBoard; //re-define as read-write
 
@@ -25,7 +25,7 @@
  * 中级：16x16, 40 mines
  * 高级：30x16, 99 mines
  */
-@implementation PlayerBoardViewController
+@implementation GameViewController
 
 
 #pragma mark IPlayerBoardDelegate
@@ -68,7 +68,6 @@
 -(void)viewDidLoad
 {
     [super viewDidLoad];
-    
     self.playerState = PlayerStateInit;
     
     int rows;
@@ -86,6 +85,7 @@
 //    MineBoard *mineBoard = [[MineBoard alloc] initWithRows:rows columns:columns];
 //    self.playerBoard = [[PlayerBoard alloc] initWithMineBoard:mineBoard];
     self.playerBoard = [[PlayerBoard alloc] initWithRows:rows columns:columns];
+    self.playerBoard.delegate = self; //接收PlayerBoard事件
 
     //TODO: 修改为delegate pattern，由view通过delegate查询data model
     self.playerBoardView.playerBoard = self.playerBoard;
@@ -102,14 +102,14 @@
     //Lay mines on mineBoard id not laied yet
     PlayerBoard *playerBoard = self.playerBoard;
 
-    if([playerBoard numberOfMines] == 0){
+    if([playerBoard numberOfMinesLaid] == 0){
         [playerBoard layMines:self.numberOfMinesToLayOnMineBoard ensureNoMineAtRow:row column:column];
     }
     return YES;
 }
 
 #pragma mark - PlayerBoardView delegate method
--(void)playerBoardView:(PlayerBoardView *)playerBoardView didSingleTapOnCell:(CellLocation *)location
+-(void)player:(PlayerBoardView *)playerBoardView didSingleTapOnCell:(CellLocation *)location
 {
     int row = location.row;
     int column = location.column;
@@ -121,7 +121,7 @@
 }
 
 #pragma mark - PlayerBoardView delegate method
--(void)playerBoardView:(PlayerBoardView *)playerBoardView didDoubleTapOnCell:(CellLocation *)location
+-(void)player:(PlayerBoardView *)playerBoardView didDoubleTapOnCell:(CellLocation *)location
 {
     {
         int row = location.row;
@@ -155,7 +155,7 @@
 }
 
 #pragma mark - PlayerBoardView delegate method
--(void)playerBoardView:(PlayerBoardView *)playerBoardView didLongPressOnCell:(CellLocation *)location
+-(void)player:(PlayerBoardView *)playerBoardView didLongPressOnCell:(CellLocation *)location
 {
     int row = location.row;
     int column = location.column;
