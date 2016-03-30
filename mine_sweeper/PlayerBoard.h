@@ -20,6 +20,7 @@ typedef NS_ENUM(NSInteger, CellState){
 @protocol IPlayerBoardDelegate <NSObject>
 
 -(void)minesLaidOnMineBoard:(int)numberOfMinesLaid; //布雷完成
+-(void)cellMarkChangedFrom:(CellState)oldState to:(CellState)newState;
 -(void)cellDidUncoverAtRow:(int)row column:(int)column; //打开了一个无雷的单元格
 -(void)mineDidExplodAtRow:(int)row column:(int)column; //打开了一个雷，player dead
 
@@ -54,8 +55,9 @@ typedef NS_ENUM(NSInteger, CellState){
 
 /**
  * lay numberOfMines mines on this MineBoard randomly
+ * ensure that there is no mine at (row, column)
  */
-- (void)layMines:(int)numOfMines;
+-(void)layMines:(int)numOfMines ensureNoMineAtRow:(int)row column:(int)column;
 
 
 
@@ -70,6 +72,8 @@ typedef NS_ENUM(NSInteger, CellState){
  * return the number of cells that is around cell[row][column] and state being CellStateCoveredMarkedAsMine
  */
 - (int)numberOfMarkedAsMinesAroundRow:(int)row column:(int)column;
+
+-(void)tryUncoverCellAtRow:(int)row column:(int)column;
 
 /**
  * uncover all cells around cell[row][column] that is not in state CellStateCoveredMarkedAsMine

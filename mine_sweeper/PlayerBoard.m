@@ -13,6 +13,7 @@
 @interface PlayerBoard()
 @property(readwrite) MineBoard *mineBoard;
 -(void)createPlayBoardData;
+-(void)layMines:(int)numOfMines;
 @end
 
 @implementation PlayerBoard{
@@ -73,10 +74,25 @@
 }
 
 //delegate to mineBoard
+-(void)layMines:(int)numOfMines ensureNoMineAtRow:(int)row column:(int)column
+{
+    BOOL minesLaid = NO;
+    while(! minesLaid){ //第一次打开，确保打开的是无雷的单元格
+        [self layMines:numOfMines];
+        //satisfied condition: !hasMine && numberOfMinesAround==0
+        if(! [self hasMineAtRow:row column:column]){
+            if(! [self hasMineAroundCellAtRow:row column:column]){
+                minesLaid = YES;
+            }
+        }
+    };
+    //notify listener that mines laied on the mineboard
+    [self.delegate minesLaidOnMineBoard:numOfMines];
+}
+
 -(void)layMines:(int)numOfMines
 {
     [self.mineBoard layMines:numOfMines];
-    [self.delegate minesLaidOnMineBoard:numOfMines]; //notify listener that mines laied on the mineboard
 }
 
 -(int)numberOfMines
@@ -116,6 +132,21 @@
     return count;
 }
 
+-(void)tryUncoverCellAtRow:(int)row column:(int)column
+{
+    CellState cellState = [self cellStateAtRow:row column:column];
+    if(cellState == CellStateCoveredNoMark){ //Cell is covered
+        BOOL hasMine = [self hasMineAtRow:row column:column];
+        if(hasMine){ //there is a mine at checked position
+            [self setCellState:CellStateUncovered AtRow:row column:column];
+            [self.delegate mineDidExplodAtRow:row column:column];            
+        }else{ //there isn't a mine at checked position cell[row][column]
+            //precondition: cell[row][column]: (1)CellStateCoveredNoMark (2)!hasMine
+            [self uncoverCellAtRow:row column:column];
+        }
+        
+    }
+}
 /** 
  * uncover all cells around cell[row][column] is not in state CellStateCoveredMarkedAsMine
  * @pre-condition: none

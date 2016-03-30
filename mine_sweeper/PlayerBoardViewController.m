@@ -14,7 +14,9 @@
 #import "CellLocation.h"
 
 @interface PlayerBoardViewController()
+
 @property(readwrite) int numberOfMinesToLayOnMineBoard; //re-define as read-write
+
 @end
 
 
@@ -25,9 +27,39 @@
  */
 @implementation PlayerBoardViewController
 
+
+#pragma mark IPlayerBoardDelegate
+//mineboard上已布雷
+-(void)minesLaidOnMineBoard:(int)numberOfMinesLaid
+{
+    [self.playerBoardView minesLaidOnMineBoard:numberOfMinesLaid];
+}
+
+//单元格标记改变
+-(void)cellMarkChangedFrom:(CellState)oldState to:(CellState)newState
+{
+    [self.playerBoardView cellMarkChangedFrom:oldState to:newState];
+}
+
+//打开了一个无雷的单元格
+-(void)cellDidUncoverAtRow:(int)row column:(int)column
+{
+    [self.playerBoardView cellDidUncoverAtRow:row column:column];
+}
+
+//打开了一个有雷的单元格
+-(void)mineDidExplodAtRow:(int)row column:(int)column
+{
+    [self.playerBoardView mineDidExplodAtRow:row column:column];
+    self.playerState = PlayerStateDead;
+    [self playerDidDie];
+}
+#pragma mark -
+
 -(void)loadView
 {
     self.playerBoardView = [[PlayerBoardView alloc] init];
+    
     self.view = self.playerBoardView;
     self.view.backgroundColor = [UIColor darkGrayColor];
     
@@ -71,17 +103,7 @@
     PlayerBoard *playerBoard = self.playerBoard;
 
     if([playerBoard numberOfMines] == 0){
-        BOOL minesLaid = NO;
-        while(! minesLaid){
-            [playerBoard layMines:self.numberOfMinesToLayOnMineBoard];
-            //satisfied condition: !hasMine && numberOfMinesAround==0
-            if(! [playerBoard hasMineAtRow:row column:column]){
-                if(! [playerBoard hasMineAroundCellAtRow:row column:column]){
-                    minesLaid = YES;
-                }
-            }
-        };
-        return NO;
+        [playerBoard layMines:self.numberOfMinesToLayOnMineBoard ensureNoMineAtRow:row column:column];
     }
     return YES;
 }
@@ -94,23 +116,8 @@
 
     [self ensureMinesLaiedOnMineBoard:row column:column];
     
-    PlayerBoard *playerBoard = self.playerBoard;
-    CellState cellState = [self.playerBoard cellStateAtRow:row column:column];
-    if(cellState == CellStateCoveredNoMark){ //Cell is covered
-        BOOL hasMine = [playerBoard hasMineAtRow:row column:column];
-        if(hasMine){ //there is a mine at checked position
-            [self.playerBoard setCellState:CellStateUncovered AtRow:row column:column];
-            [self playerDidDie];
-            [playerBoardView reloadDataAtRow:row column:column];
-            //TODO: player state==>dead
-            
-        }else{ //there isn't a mine at checked position cell[row][column]
-            //precondition: cell[row][column]: (1)CellStateCoveredNoMark (2)!hasMine
-            [self.playerBoard uncoverCellAtRow:row column:column];
-//            [playerBoardView reloadDataAtRow:row column:column];
-        }
-        
-    }
+    [self.playerBoard tryUncoverCellAtRow:row column:column];
+
 }
 
 #pragma mark - PlayerBoardView delegate method
@@ -123,29 +130,24 @@
         switch(state){
             case CellStateCoveredNoMark:{ //Covered==>MarkedAsMine
                 [self.playerBoard setCellState:CellStateCoveredMarkedAsMine AtRow:row column:column];
-                [playerBoardView setNeedsDisplay];
+                [playerBoardView cellMarkChangedFrom:CellStateCoveredNoMark to:CellStateCoveredMarkedAsMine];
             }
                 break;
                 
             case CellStateCoveredMarkedAsMine:{ //MarkedAsMine==>Covered
                 [self.playerBoard setCellState:CellStateCoveredNoMark AtRow:row column:column];
-                [playerBoardView setNeedsDisplay];
+                [playerBoardView cellMarkChangedFrom:CellStateCoveredMarkedAsMine to:CellStateCoveredNoMark];
             }
                 break;
                 
             case CellStateCoveredMarkedAsUncertain:{ //Uncertain==>Covered
                 [self.playerBoard setCellState:CellStateCoveredNoMark AtRow:row column:column];
-                [playerBoardView setNeedsDisplay];
+                [playerBoardView cellMarkChangedFrom:CellStateCoveredMarkedAsUncertain to:CellStateCoveredNoMark];
             }
                 break;
                 
-            case CellStateUncovered:{ //Uncovered, uncover cells around if available
-                    BOOL success = [self.playerBoard uncoverAllNotMarkedAsMineCellsAround:row column:column];
-                    if(! success){
-                        self.playerState = PlayerStateDead;
-                        [self playerDidDie];
-                    }
-                [self.playerBoardView setNeedsDisplay];
+            case CellStateUncovered:{ //Uncovered, double click to uncover cells around if available
+                    [self.playerBoard uncoverAllNotMarkedAsMineCellsAround:row column:column];
                 }
                 break;
         }
@@ -160,10 +162,10 @@
     CellState state = [self.playerBoard cellStateAtRow:row column:column];
     if(state == CellStateCoveredNoMark){ //Covered==>Uncertain
         [self.playerBoard setCellState:CellStateCoveredMarkedAsUncertain AtRow:row column:column];
-        [self.playerBoardView setNeedsDisplay];
+        [self.playerBoardView cellMarkChangedFrom:CellStateCoveredNoMark to:CellStateCoveredMarkedAsUncertain];
     }else if (state == CellStateCoveredMarkedAsUncertain){ //Uncertain==>Covered
         [self.playerBoard setCellState:CellStateCoveredNoMark AtRow:row column:column];
-        [self.playerBoardView setNeedsDisplay];
+        [self.playerBoardView cellMarkChangedFrom:CellStateCoveredMarkedAsUncertain to:CellStateCoveredNoMark];
     }
 }
 

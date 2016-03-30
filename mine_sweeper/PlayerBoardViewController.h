@@ -33,10 +33,4 @@ typedef NS_ENUM(NSInteger, PlayerState){
 //plaeyr board view object
 @property(strong) PlayerBoardView *playerBoardView;
 
-//delegate method for PlayerBoardView object to call
--(void)playerBoardView:(PlayerBoardView *)playerBoardView didSingleTapOnCell:(CellLocation *)location;
-//delegate method for PlayerBoardView object to call
--(void)playerBoardView:(PlayerBoardView *)playerBoardView didDoubleTapOnCell:(CellLocation *)location;
-//delegate method for PlayerBoardView object to call
--(void)playerBoardView:(PlayerBoardView *)playerBoardView didLongPressOnCell:(CellLocation *)location;
 @end

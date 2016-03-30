@@ -55,7 +55,7 @@
     [self addGestureRecognizer:longPressRecognizer];
 }
 
-//UITapGestureRecognizer handler
+//UITapGestureRecognizer handler, 通知delegate单击事件发生
 -(void)handleSingleTapGesture:(UITapGestureRecognizer *)gestureRecognizer
 {    
     CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
@@ -66,7 +66,7 @@
 }
 
 
-//UITapGestureRecognizer handler
+//UITapGestureRecognizer handler，通知delegate双击事件发生
 -(void)handleDoubleTapGesture:(UITapGestureRecognizer *)gestureRecognizer
 {
     CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
@@ -76,6 +76,7 @@
     }
 }
 
+//UITapGestureRecognizer handler，通知delegate长按事件发生
 -(void)handleLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer
 {
     //UILongPressGestureRecognizer is a continuous recognizer
@@ -88,9 +89,9 @@
     }
 }
 
+//计算在view上的touch point(x,y)对应的单元格(row, column)
 - (CellLocation *)cellLocationAtPoint:(CGPoint)point
 {
-    
     CGRect bounds = self.bounds;
     PlayerBoard *playerBoard = self.playerBoard;
     CGFloat hSize = bounds.size.width/playerBoard.columns;
@@ -112,17 +113,22 @@
 }
 
 
--(void)reloadData
+-(void)minesLaidOnMineBoard:(int)numberOfMinesLaid
 {
     [self setNeedsDisplay];
 }
 
--(void)reloadDataAtRow:(int)row column:(int)column
+-(void)cellMarkChangedFrom:(CellState)oldState to:(CellState)newState
 {
     [self setNeedsDisplay];
 }
 
--(void)reloadDataInLocations:(NSArray<CellLocation *> *)locations
+-(void)cellDidUncoverAtRow:(int)row column:(int)column
+{
+    [self setNeedsDisplay];
+}
+
+-(void)mineDidExplodAtRow:(int)row column:(int)column
 {
     [self setNeedsDisplay];
 }

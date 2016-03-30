@@ -13,17 +13,12 @@
 @protocol IPlayerBoardViewDelegate;
 
 
-@interface PlayerBoardView : UIView
+@interface PlayerBoardView : UIView <IPlayerBoardDelegate>
 
-//TODO: 修改为delegate模式
 @property(weak) PlayerBoard *playerBoard; //DataModel delegate；必须为weak引用，否则循环引用
 
 @property(weak) id<IPlayerBoardViewDelegate> delegate; //Action handler delegate；必须为weak引用，否则会产生循环引用
 
-//reload data callback
-- (void)reloadData;
-- (void)reloadDataAtRow:(int)row column:(int)column;
-- (void)reloadDataInLocations:(NSArray<CellLocation *> *)locations;
 - (void)drawRect:(CGRect)rect;
 
 @end
