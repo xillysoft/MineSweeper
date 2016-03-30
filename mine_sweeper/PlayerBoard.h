@@ -20,7 +20,7 @@ typedef NS_ENUM(NSInteger, CellState){
 @protocol IPlayerBoardDelegate <NSObject>
 
 -(void)minesLaidOnMineBoard:(int)numberOfMinesLaid; //布雷完成
--(void)cellMarkChangedFrom:(CellState)oldState to:(CellState)newState;
+-(void)cellMarkChangedFrom:(CellState)oldState to:(CellState)newState atRow:(int)row column:(int)column;
 -(void)cellDidUncoverAtRow:(int)row column:(int)column; //打开了一个无雷的单元格
 -(void)mineDidExplodAtRow:(int)row column:(int)column; //打开了一个雷，player dead
 

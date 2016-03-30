@@ -35,12 +35,12 @@
 
 @optional
 //delegate method for PlayerBoardView object to call
--(void)player:(PlayerBoardView *)playerBoardView didSingleTapOnCell:(CellLocation *)location;
+-(void)player:(PlayerBoardView *)player didSingleTapOnCell:(CellLocation *)location;
 
 @optional
 //delegate method for PlayerBoardView object to call
--(void)player:(PlayerBoardView *)playerBoardView didDoubleTapOnCell:(CellLocation *)location;
+-(void)player:(PlayerBoardView *)player didDoubleTapOnCell:(CellLocation *)location;
 
 @optional
--(void)player:(PlayerBoardView *)playerBoardView didLongPressOnCell:(CellLocation *)location;
+-(void)player:(PlayerBoardView *)player didLongPressOnCell:(CellLocation *)location;
 @end

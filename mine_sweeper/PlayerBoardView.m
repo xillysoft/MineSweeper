@@ -112,26 +112,42 @@
     }
 }
 
-
+#pragma mark -
+#pragma mark IPlayerBoardDelegate
 -(void)minesLaidOnMineBoard:(int)numberOfMinesLaid
 {
+#ifdef DEBUG
+    NSLog(@"--PlayerBoardView::minesLaidOnMineBoard:%d!", numberOfMinesLaid);
+#endif
     [self setNeedsDisplay];
 }
 
--(void)cellMarkChangedFrom:(CellState)oldState to:(CellState)newState
+-(void)cellMarkChangedFrom:(CellState)oldState to:(CellState)newState atRow:(int)row column:(int)column;
 {
+#ifdef DEBUG
+    NSLog(@"--PlayerBoardView::cell[%d][%d] MarkChangedFrom:%ld to:%ld!", row, column, oldState, (long)newState);
+#endif
     [self setNeedsDisplay];
 }
 
 -(void)cellDidUncoverAtRow:(int)row column:(int)column
 {
+#ifdef DEBUG
+    NSLog(@"--PlayerBoardView::cellDidUncoverAtRow:%d column:%d!", row, column);
+#endif
     [self setNeedsDisplay];
 }
 
 -(void)mineDidExplodAtRow:(int)row column:(int)column
 {
+#ifdef DEBUG
+    NSLog(@"--PlayerBoardView::mineDidExplodAtRow:%d column:%d!", row, column);
+#endif
     [self setNeedsDisplay];
 }
+
+#pragma mark -
+
 
 - (void)drawRect:(CGRect)rect
 {

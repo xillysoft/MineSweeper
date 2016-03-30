@@ -12,7 +12,9 @@
 
 @interface PlayerBoard()
 @property(readwrite) MineBoard *mineBoard;
-- (void)setCellState:(CellState)state AtRow:(int)row column:(int)column;
+
+- (void)_setCellState:(CellState)state AtRow:(int)row column:(int)column;
+
 -(void)createPlayBoardData;
 -(void)layMines:(int)numOfMines;
 @end
@@ -109,16 +111,19 @@
     return cells[row*self.columns+column];
 }
 
-- (void)setCellState:(CellState)state AtRow:(int)row column:(int)column
+- (void)_setCellState:(CellState)state AtRow:(int)row column:(int)column
 {
     CellState *cells = (CellState *)[_playerBoardData bytes];
     cells[row*self.columns+column] = state;
 }
 
+/*
+ * change mark of cell
+ */
 -(void)setCellMarkFrom:(CellState)oldStateMark toNewMark:(CellState)stateMark atRow:(int)row column:(int)column
 {
-    [self setCellState:stateMark AtRow:row column:column];
-    [self.delegate cellMarkChangedFrom:oldStateMark to:stateMark];
+    [self _setCellState:stateMark AtRow:row column:column];
+    [self.delegate cellMarkChangedFrom:oldStateMark to:stateMark atRow:row column:column];
 }
 
 /**
@@ -145,20 +150,20 @@
     if(cellState == CellStateCoveredNoMark){ //Cell is covered
         BOOL hasMine = [self hasMineAtRow:row column:column];
         if(hasMine){ //there is a mine at checked position
-            [self setCellState:CellStateUncovered AtRow:row column:column];
+            //TODO should mine being uncovered?
+            [self _setCellState:CellStateUncovered AtRow:row column:column];
             [self.delegate mineDidExplodAtRow:row column:column];            
         }else{ //there isn't a mine at [row][column]
             //precondition: cell[row][column]: (1)CellStateCoveredNoMark (2)!hasMine
             if(! recursive){ //uncover this cell only
                 //not has mine, set state to Uncovered
-                [self setCellState:CellStateUncovered AtRow:row column:column]; //uncover cell[row][column]
+                [self _setCellState:CellStateUncovered AtRow:row column:column]; //uncover cell[row][column]
                 //notify listener that a cell uncovered without mine under it
                 [self.delegate cellDidUncoverAtRow:row column:column];
             }else{
                 [self uncoverCellAtRow:row column:column];
             }
         }
-        
     }
 }
 /** 
@@ -204,13 +209,13 @@
     if([self cellStateAtRow:row column:column] == CellStateCoveredNoMark){ //单元未打开并且未标记为雷
         //尝试打开该单元格
         if([self.mineBoard hasMineAtRow:row column:column]){ //该单元格下面是雷，失败
-            [self setCellState:CellStateUncovered AtRow:row column:column];
+            [self _setCellState:CellStateUncovered AtRow:row column:column];
             [self.delegate mineDidExplodAtRow:row column:column]; //notify listener that mine exploded
             return FALSE; //player dead.
         }
         
         //has no mine, set state to Uncovered
-        [self setCellState:CellStateUncovered AtRow:row column:column]; //uncover cell[row][column]
+        [self _setCellState:CellStateUncovered AtRow:row column:column]; //uncover cell[row][column]
         //notify listener that a cell uncovered without mine under it
         [self.delegate cellDidUncoverAtRow:row column:column];
         

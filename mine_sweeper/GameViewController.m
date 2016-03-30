@@ -13,7 +13,11 @@
 #import "PlayerBoardView.h"
 #import "CellLocation.h"
 
-@interface GameViewController()
+@interface GameViewController(){
+    int _numberOfMinesLaied;
+    int _numberOfMinesUncovered;
+    int _numberOfMinesMarkedAsMine;
+}
 
 @property(readwrite) int numberOfMinesToLayOnMineBoard; //re-define as read-write
 
@@ -33,18 +37,34 @@
 -(void)minesLaidOnMineBoard:(int)numberOfMinesLaid
 {
     [self.playerBoardView minesLaidOnMineBoard:numberOfMinesLaid];
+    _numberOfMinesLaied = numberOfMinesLaid;
 }
 
 //单元格标记改变
--(void)cellMarkChangedFrom:(CellState)oldState to:(CellState)newState
+-(void)cellMarkChangedFrom:(CellState)oldState to:(CellState)newState atRow:(int)row column:(int)column;
 {
-    [self.playerBoardView cellMarkChangedFrom:oldState to:newState];
+    [self.playerBoardView cellMarkChangedFrom:oldState to:newState atRow:row column:column];
+    
+    if(oldState==CellStateCoveredMarkedAsMine){
+        _numberOfMinesMarkedAsMine--;
+    }
+    if(newState==CellStateCoveredMarkedAsMine){
+        _numberOfMinesMarkedAsMine++;
+    }
 }
 
 //打开了一个无雷的单元格
 -(void)cellDidUncoverAtRow:(int)row column:(int)column
 {
     [self.playerBoardView cellDidUncoverAtRow:row column:column];
+    
+    _numberOfMinesUncovered++;
+    //test whether all mines swept
+    int numberOfMinesCorvered = self.playerBoard.rows*self.playerBoard.columns-_numberOfMinesUncovered;
+    if(numberOfMinesCorvered==_numberOfMinesLaied
+       && _numberOfMinesMarkedAsMine==_numberOfMinesLaied){
+        [self playerDidWin];
+    }
 }
 
 //打开了一个有雷的单元格
@@ -94,6 +114,10 @@
 
     //defer lay mines until first user-tap action!
 //     [self.playerBoard.mineBoard layMines:numberOfMines];
+    
+    //用于测试胜利条件
+    _numberOfMinesMarkedAsMine = 0;
+    _numberOfMinesUncovered = 0;
 
 }
 
@@ -109,19 +133,19 @@
 }
 
 #pragma mark - PlayerBoardView delegate method
--(void)player:(PlayerBoardView *)playerBoardView didSingleTapOnCell:(CellLocation *)location
+-(void)player:(PlayerBoardView *)player didSingleTapOnCell:(CellLocation *)location
 {
     int row = location.row;
     int column = location.column;
 
     [self ensureMinesLaiedOnMineBoard:row column:column];
     
-    [self.playerBoard tryUncoverCellAtRow:row column:column recursive:NO];
+    [self.playerBoard tryUncoverCellAtRow:row column:column recursive:YES];
 
 }
 
 #pragma mark - PlayerBoardView delegate method
--(void)player:(PlayerBoardView *)playerBoardView didDoubleTapOnCell:(CellLocation *)location
+-(void)player:(PlayerBoardView *)player didDoubleTapOnCell:(CellLocation *)location
 {
     {
         int row = location.row;
@@ -130,19 +154,19 @@
         switch(state){
             case CellStateCoveredNoMark:{ //Covered==>MarkedAsMine
                 [self.playerBoard setCellMarkFrom:CellStateCoveredNoMark toNewMark:CellStateCoveredMarkedAsMine atRow:row column:column];
-                [playerBoardView cellMarkChangedFrom:CellStateCoveredNoMark to:CellStateCoveredMarkedAsMine];
+//                [playerBoardView cellMarkChangedFrom:CellStateCoveredNoMark to:CellStateCoveredMarkedAsMine];
             }
                 break;
                 
             case CellStateCoveredMarkedAsMine:{ //MarkedAsMine==>CoveredNoMark
                 [self.playerBoard setCellMarkFrom:CellStateCoveredMarkedAsMine toNewMark:CellStateCoveredNoMark atRow:row column:column];
-                [playerBoardView cellMarkChangedFrom:CellStateCoveredMarkedAsMine to:CellStateCoveredNoMark];
+//                [playerBoardView cellMarkChangedFrom:CellStateCoveredMarkedAsMine to:CellStateCoveredNoMark];
             }
                 break;
                 
             case CellStateCoveredMarkedAsUncertain:{ //Uncertain==>CoveredNoMark
                 [self.playerBoard setCellMarkFrom:CellStateCoveredMarkedAsUncertain toNewMark:CellStateCoveredNoMark atRow:row column:column];
-                [playerBoardView cellMarkChangedFrom:CellStateCoveredMarkedAsUncertain to:CellStateCoveredNoMark];
+//                [playerBoardView cellMarkChangedFrom:CellStateCoveredMarkedAsUncertain to:CellStateCoveredNoMark];
             }
                 break;
                 
@@ -161,22 +185,35 @@
     int column = location.column;
     CellState state = [self.playerBoard cellStateAtRow:row column:column];
     if(state == CellStateCoveredNoMark){ //Covered==>Uncertain
-        [self.playerBoard setCellMark:CellStateCoveredMarkedAsUncertain atRow:row column:column];
-        [self.playerBoardView cellMarkChangedFrom:CellStateCoveredNoMark to:CellStateCoveredMarkedAsUncertain];
+        [self.playerBoard setCellMarkFrom:CellStateCoveredNoMark toNewMark:CellStateCoveredMarkedAsUncertain atRow:row column:column];
+//        [self.playerBoardView cellMarkChangedFrom:CellStateCoveredNoMark to:CellStateCoveredMarkedAsUncertain];
     }else if (state == CellStateCoveredMarkedAsUncertain){ //Uncertain==>Covered
-        [self.playerBoard setCellMark:CellStateCoveredNoMark atRow:row column:column];
-        [self.playerBoardView cellMarkChangedFrom:CellStateCoveredMarkedAsUncertain to:CellStateCoveredNoMark];
+        [self.playerBoard setCellMarkFrom:CellStateCoveredMarkedAsUncertain toNewMark:CellStateCoveredNoMark atRow:row column:column];
+//        [self.playerBoardView cellMarkChangedFrom:CellStateCoveredMarkedAsUncertain to:CellStateCoveredNoMark];
     }
 }
 
 -(void)playerDidDie
 {
-    NSLog(@"--Player Dead!");
+    NSLog(@"--GameViewController::Player Dead!");
     
 //    AudioServicesPlayAlertSound(kSystemSoundID_Vibrate);
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate); //vibrate the phone
 
+    //start new game
+    GameViewController *viewController = [[GameViewController alloc] init];
+    [self showViewController:viewController sender:self];
 }
 
+-(void)playerDidWin
+{
+    NSLog(@"--GameViewController::Player Win!");
+    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate); //vibrate the phone
+
+    //start new game
+    GameViewController *viewController = [[GameViewController alloc] init];
+    [self showViewController:viewController sender:self];
+
+}
 
 @end
