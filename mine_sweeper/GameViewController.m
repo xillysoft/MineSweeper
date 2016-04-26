@@ -74,9 +74,9 @@
 }
 
 //打开了一个有雷的单元格
--(void)mineDidExplodAtRow:(int)row column:(int)column
+-(void)mineDidExplodeAtRow:(int)row column:(int)column
 {
-    [self.playerBoardView mineDidExplodAtRow:row column:column];
+    [self.playerBoardView mineDidExplodeAtRow:row column:column];
     self.playerState = PlayerStateDead;
     [self playerDidDie];
 }

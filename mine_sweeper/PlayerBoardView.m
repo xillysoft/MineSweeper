@@ -138,7 +138,7 @@
     [self setNeedsDisplay];
 }
 
--(void)mineDidExplodAtRow:(int)row column:(int)column
+-(void)mineDidExplodeAtRow:(int)row column:(int)column
 {
 #ifdef DEBUG
     NSLog(@"--PlayerBoardView::mineDidExplodAtRow:%d column:%d!", row, column);

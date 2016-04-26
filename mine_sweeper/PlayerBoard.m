@@ -152,7 +152,7 @@
         if(hasMine){ //there is a mine at checked position
             //TODO should mine being uncovered?
             [self _setCellState:CellStateUncovered AtRow:row column:column];
-            [self.delegate mineDidExplodAtRow:row column:column];            
+            [self.delegate mineDidExplodeAtRow:row column:column];            
         }else{ //there isn't a mine at [row][column]
             //precondition: cell[row][column]: (1)CellStateCoveredNoMark (2)!hasMine
             if(! recursive){ //uncover this cell only
@@ -210,7 +210,7 @@
         //尝试打开该单元格
         if([self.mineBoard hasMineAtRow:row column:column]){ //该单元格下面是雷，失败
             [self _setCellState:CellStateUncovered AtRow:row column:column];
-            [self.delegate mineDidExplodAtRow:row column:column]; //notify listener that mine exploded
+            [self.delegate mineDidExplodeAtRow:row column:column]; //notify listener that mine exploded
             return FALSE; //player dead.
         }
         
