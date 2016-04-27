@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <GLKit/GLKit.h>
 #import "PlayerBoard.h"
 #import "MineBoard.h"
 #import "PlayerBoardView.h"

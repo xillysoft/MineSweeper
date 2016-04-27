@@ -5,13 +5,67 @@
 //  Created by 赵小健 on 2/25/16.
 //  Copyright © 2016 赵小健. All rights reserved.
 //
-
+#import <OpenGLES/ES1/gl.h>
+#import <CoreText/CoreText.h>
 #import "PlayerBoard.h"
 #import "PlayerBoardView.h"
 #import "CellLocation.h"
 #import "GameViewController.h"
 
-@interface PlayerBoardView()
+uint32_t nextPowerOfTwo(uint32_t v)
+{
+    v--;
+    v |= v >> 1;
+    v |= v >> 2;
+    v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
+    v++;
+    return v;
+}
+
+//you are responsible of glDeleteTextures() the generated texture!
+GLuint CreateTextureFromText(NSAttributedString *attriText)
+{
+    CGSize textSize = [attriText size];
+    textSize.width = nextPowerOfTwo(textSize.width);
+    textSize.height = nextPowerOfTwo(textSize.height);
+    size_t numBytes = textSize.width*textSize.height*4;
+    void * pixels = malloc(numBytes);
+    memset(pixels, 0, numBytes); //IMPORTANT!
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef bitmapContext = CGBitmapContextCreate(pixels, textSize.width, textSize.height, 8, textSize.width*4, colorSpace, kCGImageAlphaNoneSkipLast|kCGBitmapByteOrder32Big);
+    UIGraphicsPushContext(bitmapContext);
+    //flip y-
+    CGContextTranslateCTM(bitmapContext, 0, textSize.height);
+    CGContextScaleCTM(bitmapContext, 1, -1);
+    [attriText drawInRect:CGRectMake(0, 0, textSize.width, textSize.height)];
+    UIGraphicsPopContext();
+    CGColorSpaceRelease(colorSpace);
+    CGContextRelease(bitmapContext);
+    GLuint texture;
+//    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); //VERY IMAPORTANT to set!
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textSize.width, textSize.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    free(pixels);
+    return texture;
+}
+
+
+@interface PlayerBoardView(){
+    EAGLContext *_eaglContext;
+    GLfloat _zNear;
+    GLfloat _zFar;
+    GLfloat _left;
+    GLfloat _right;
+    GLfloat _bottom;
+    GLfloat _top;
+}
+
+@property GLKTextureInfo *textureInfoMineIcon;
+@property GLKTextureInfo *textureInfoUncertainIcon;
 
 @end
 
@@ -53,6 +107,8 @@
     UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGesture:)];
     longPressRecognizer.numberOfTouchesRequired = 1;
     [self addGestureRecognizer:longPressRecognizer];
+    
+    [self setupOpenGL];
 }
 
 //UITapGestureRecognizer handler, 通知delegate单击事件发生
@@ -60,8 +116,8 @@
 {    
     CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
     CellLocation *location = [self cellLocationAtPoint:point];
-    if(location && [self.delegate respondsToSelector:@selector(player:didSingleTapOnCell:)]) {
-        [self.delegate player:self didSingleTapOnCell:location];
+    if(location && [self.listener respondsToSelector:@selector(player:didSingleTapOnCell:)]) {
+        [self.listener player:self didSingleTapOnCell:location];
     }
 }
 
@@ -71,8 +127,8 @@
 {
     CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
     CellLocation *location = [self cellLocationAtPoint:point];
-    if(location && [self.delegate respondsToSelector:@selector(player:didDoubleTapOnCell:)]){
-        [self.delegate player:self didDoubleTapOnCell:location];
+    if(location && [self.listener respondsToSelector:@selector(player:didDoubleTapOnCell:)]){
+        [self.listener player:self didDoubleTapOnCell:location];
     }
 }
 
@@ -83,8 +139,8 @@
     if(gestureRecognizer.state == UIGestureRecognizerStateEnded){
         CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
         CellLocation *location = [self cellLocationAtPoint:point];
-        if(location && [self.delegate respondsToSelector:@selector(player:didLongPressOnCell:)]) {
-            [self.delegate player:self didLongPressOnCell:location];
+        if(location && [self.listener respondsToSelector:@selector(player:didLongPressOnCell:)]) {
+            [self.listener player:self didLongPressOnCell:location];
         }
     }
 }
@@ -119,7 +175,7 @@
 #ifdef DEBUG
     NSLog(@"--PlayerBoardView::minesLaidOnMineBoard:%d!", numberOfMinesLaid);
 #endif
-    [self setNeedsDisplay];
+//    [self setNeedsDisplay]; 
 }
 
 -(void)cellMarkChangedFrom:(CellState)oldState to:(CellState)newState atRow:(int)row column:(int)column;
@@ -149,22 +205,87 @@
 #pragma mark -
 
 
+
+-(void)setupOpenGL
+{
+    _eaglContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+    self.context = _eaglContext;
+    [EAGLContext setCurrentContext:_eaglContext];
+    //    self.playerBoardView.drawableColorFormat = GLKViewDrawableColorFormatRGBA8888;
+    self.drawableDepthFormat = GLKViewDrawableDepthFormat24;
+    
+    glClearColor(0, 1, 1, 1);
+    
+    self.contentMode = UIViewContentModeRedraw;
+    self.enableSetNeedsDisplay = YES;
+    
+    UIImage *mineIcon = [UIImage imageNamed:@"mine_flag.png"];
+    self.textureInfoMineIcon = [GLKTextureLoader textureWithCGImage:mineIcon.CGImage options:nil error:nil];
+
+    UIImage *uncertainIcon = [UIImage imageNamed:@"uncertain.gif"];
+    self.textureInfoUncertainIcon = [GLKTextureLoader textureWithCGImage:uncertainIcon.CGImage options:nil error:nil];
+    
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    
+}
+
+-(void)layoutSubviews
+{
+    NSInteger width = self.bounds.size.width;
+    NSInteger height = self.bounds.size.height;
+    if(width==0 || height==0) return;
+    
+    glViewport(0, 0, width, height);
+
+    _zNear = 1;
+    _zFar = 100;
+    
+    GLfloat aspect = (GLfloat)width/height;
+    if(width < height) {
+        _left = -1;
+        _right = 1;
+        _bottom = -1.0/aspect;
+        _top = 1.0/aspect;
+    }else{ //width>height
+        _left = -1*aspect;
+        _right = 1*aspect;
+        _bottom = -1;
+        _top = 1;
+    }
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity(); //
+    glOrthof(_left, _right, _bottom, _top, _zNear, _zFar);
+    glMatrixMode(GL_MODELVIEW);
+}
+
 - (void)drawRect:(CGRect)rect
 {
+
     if(self.playerBoard == nil)
         return;
+
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+    glTranslatef(0, 0, -_zNear);
     
-    CGRect bounds = self.bounds;
+    GLfloat width = _right - _left;
+    GLfloat height = _top - _bottom;
+    
+    //flip y- axis
+    glTranslatef(0, -(_bottom+_top)/2, 0);
+    glScalef(1, -1, 1);
+    glTranslatef(0, (_bottom+_top)/2, 0);
+    
     PlayerBoard *playerBoard = self.playerBoard;
-    CGFloat hSize = bounds.size.width/playerBoard.columns;
-    CGFloat vSize = bounds.size.height/playerBoard.rows;
-    CGFloat size = MIN(hSize, vSize);
     int columns = playerBoard.columns;
     int rows = playerBoard.rows;
-    CGFloat x0 = (bounds.size.width-size*columns)/2;
-    CGFloat y0 = (bounds.size.height-size*rows)/2;
+    CGFloat hSize = width/columns;
+    CGFloat vSize = height/rows;
+    CGFloat size = MIN(hSize, vSize);
+    CGFloat x0 = _left + (width - size*columns)/2;
+    CGFloat y0 = _bottom + (height - size*rows)/2;
     
-    CGContextRef context = UIGraphicsGetCurrentContext();
     NSDictionary *attribs =({
         NSMutableParagraphStyle *paraStyle = [[NSMutableParagraphStyle alloc] init];
         paraStyle.alignment = NSTextAlignmentCenter;
@@ -172,76 +293,127 @@
     });
     
 
+    GLfloat rectVertices[] = {
+        0, size, 0,
+        0, 0, 0,
+        size, 0, 0,
+        size, size, 0
+    };
+    
+    GLfloat rectTexCoords[] = {
+        0, 1,
+        0, 0,
+        1, 0,
+        1, 1
+    };
+    
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, rectVertices);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(2, GL_FLOAT, 0, rectTexCoords);
+
     CGFloat y = y0;
     for(int row=0; row<rows; row++, y+=size){
         CGFloat x = x0;
         for(int column=0; column<columns; column++, x+=size){
-            CGRect cellRect = CGRectMake(x, y, size, size);
-            CellState state = [self.playerBoard cellStateAtRow:row column:column];
-            switch(state){
-                case CellStateCoveredNoMark:
-                {
-                    CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
-                    CGContextFillRect(context, cellRect);
-                    BOOL showHiddenMine = NO;
-                    if(showHiddenMine){
-                        if([playerBoard hasMineAtRow:row column:column]){
-                            CGContextSetStrokeColorWithColor(context, [UIColor lightGrayColor].CGColor);
-                            CGRect rect1 = CGRectMake(x+size/4, y+size/4, size/2, size/2);
-                            CGContextStrokeEllipseInRect(context, rect1);
-                        }
+            glPushMatrix();
+            {
+                CellState state = [self.playerBoard cellStateAtRow:row column:column];
+                switch(state){
+                    case CellStateCoveredNoMark:
+                    {
+                        glColor4f(0, 1, 0, 1);
+//                        glScalef(size, size, 1);
+                        glTranslatef(x, y, 0);
+                        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+                        glColor4f(0.25, 0.25, 0.25, 1);
+                        glDrawArrays(GL_LINE_LOOP, 0, 4);
                     }
-                }
-                break;
-                    
-                case CellStateCoveredMarkedAsMine:
-                {
-                    CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
-                    CGContextFillRect(context, cellRect);
-                    
-                    UIImage *mineIcon = [UIImage imageNamed:@"mine_flag.png"];
-                    [mineIcon drawInRect:cellRect blendMode:kCGBlendModeNormal alpha:1.0];
-                }
-                break;
-                    
-                case CellStateCoveredMarkedAsUncertain:
-                {
-                    CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
-                    CGContextFillRect(context, cellRect);
-                    NSString *uncertainMark = @"?";
-                    NSDictionary *attributes1 = @{NSForegroundColorAttributeName:[UIColor grayColor], NSFontAttributeName:[UIFont boldSystemFontOfSize:20]};
-                    CGSize size1 = [uncertainMark sizeWithAttributes:attributes1];
-                    CGPoint point1 = CGPointMake(x+(size-size1.width)/2, y+(size-size1.height)/2);
-                    [uncertainMark drawAtPoint:point1 withAttributes:attributes1];
-                    
-                }
-                break;
-                    
-                case CellStateUncovered:
-                {
-                    CGContextSetFillColorWithColor(context, [UIColor lightGrayColor].CGColor);
-                    CGContextFillRect(context, cellRect);
-                    if([playerBoard hasMineAtRow:row column:column]){
-                        CGContextSetFillColorWithColor(context, [UIColor redColor].CGColor);
-                        CGContextFillRect(context, cellRect);
+                    break;
                         
-                        UIImage *mineIcon = [UIImage imageNamed:@"Minesweeper_Icon1.png"];
-                        [mineIcon drawInRect:cellRect blendMode:kCGBlendModeMultiply alpha:1.0];
-                    }else{
-                        int numberOfMinesAround = [playerBoard numberOfMinesAroundCellAtRow:row column:column];
-                        if(numberOfMinesAround > 0){
-                            NSString *text = [NSString stringWithFormat:@"%d", numberOfMinesAround];
-                            CGSize textSize = [text sizeWithAttributes:attribs];
-                            CGRect rect1 = CGRectMake(x, y+(size-textSize.height)/2, size, size);
-                            [text drawInRect:rect1 withAttributes:attribs];
-                        }
+                    case CellStateCoveredMarkedAsMine:
+                    {
+                        glEnable(GL_TEXTURE_2D);
+                        
+                        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+                        glColor4f(0, 1, 0, 1);
+                        
+                        glBindTexture(self.textureInfoMineIcon.target, self.textureInfoMineIcon.name);
+                        
+//                        glScalef(size, size, 1);
+                        glTranslatef(x, y, 0);
+                        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+                        glColor4f(0.25, 0.25, 0.25, 1);
+                        glDrawArrays(GL_LINE_LOOP, 0, 4);
+
+                        glDisable(GL_TEXTURE_2D);
                     }
+                    break;
+                        
+                    case CellStateCoveredMarkedAsUncertain:
+                    {
+                        glEnable(GL_TEXTURE_2D);
+                        
+                        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+                        glColor4f(0, 1, 0, 1);
+                        glBindTexture(self.textureInfoUncertainIcon.target, self.textureInfoUncertainIcon.name);
+                        
+                        glTranslatef(x, y, 0);
+                        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+                        glColor4f(0.25, 0.25, 0.25, 1);
+                        glDrawArrays(GL_LINE_LOOP, 0, 4);
+                        
+                        glDisable(GL_TEXTURE_2D);
+                    }
+                        
+                    break;
+                        
+                    case CellStateUncovered:
+                    {
+                        glTranslatef(x, y, 0);
+                        
+                        if(! [playerBoard hasMineAtRow:row column:column]){
+                            int numberOfMinesAround = [playerBoard numberOfMinesAroundCellAtRow:row column:column];
+                            if(numberOfMinesAround > 0){ //show numberOfMinesArount cell[row][column]
+                                NSString *text = [NSString stringWithFormat:@"%d", numberOfMinesAround];
+                                NSAttributedString *attriText = [[NSAttributedString alloc] initWithString:text attributes:attribs];
+                                {
+                                    GLuint texture = CreateTextureFromText(attriText);
+                                    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+                                    glColor4f(0.75, 0.75, 0.75, 1);
+                                    glEnable(GL_TEXTURE_2D);
+                                    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+                                    glDisable(GL_TEXTURE_2D);
+                                    glDeleteTextures(1, &texture);
+                                }
+                                
+                            }else{ //numberOfMinesAround == 0
+                                glColor4f(0.75, 0.75, 0.75, 1);
+                                glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+                            }
+                        }else{ //[playerBoard hasMineAtRow:row column:column]==YES
+                            NSString *text = @"BOOM!";
+                            CGSize textSize = [text sizeWithAttributes:attribs];
+                            textSize.width = nextPowerOfTwo(textSize.width);
+                            textSize.height = nextPowerOfTwo(textSize.height);
+                            CreateTextureFromText([[NSAttributedString alloc] initWithString:text attributes:@{NSForegroundColorAttributeName:[UIColor yellowColor], NSFontAttributeName:[UIFont boldSystemFontOfSize:14]}]);
+                            glEnable(GL_TEXTURE_2D);
+                            glColor4f(1, 0, 0, 1);
+                            glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+                            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+                            glDisable(GL_TEXTURE_2D);
+                        }
+                        glColor4f(0.25, 0.25, 0.25, 1);
+                        glDrawArrays(GL_LINE_LOOP, 0, 4);
+
+                    }
+                    break;
                 }
-                break;
-            }
-            
-            CGContextSetStrokeColorWithColor(context, [UIColor grayColor].CGColor);
-            CGContextStrokeRect(context, cellRect);
+                
+//            CGContextSetStrokeColorWithColor(context, [UIColor grayColor].CGColor);
+//            CGContextStrokeRect(context, cellRect);
+        }
+        glPopMatrix();
         }
     }
 }

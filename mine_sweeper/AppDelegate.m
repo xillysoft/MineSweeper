@@ -20,6 +20,7 @@
     // Override point for customization after application launch.
     CGRect frame = [UIScreen mainScreen].bounds;
     self.window = [[UIWindow alloc] initWithFrame:frame];
+    
     GameViewController *viewController = [[GameViewController alloc] init];
     self.window.rootViewController = viewController;
     [self.window makeKeyAndVisible];

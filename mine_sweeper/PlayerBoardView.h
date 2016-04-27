@@ -7,17 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <GLKit/GLKit.h>
 @class PlayerBoard;
 @class GameViewController;
 @class CellLocation;
 @protocol IPlayerBoardViewDelegate;
 
 
-@interface PlayerBoardView : UIView <IPlayerBoardDelegate>
+@interface PlayerBoardView : GLKView <IPlayerBoardDelegate>
 
 @property(weak) PlayerBoard *playerBoard; //DataModel delegate；必须为weak引用，否则循环引用
 
-@property(weak) id<IPlayerBoardViewDelegate> delegate; //Action handler delegate；必须为weak引用，否则会产生循环引用
+@property(weak) id<IPlayerBoardViewDelegate> listener; //Action handler delegate；必须为weak引用，否则会产生循环引用
 
 - (void)drawRect:(CGRect)rect;
 

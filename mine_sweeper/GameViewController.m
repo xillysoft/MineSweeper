@@ -96,9 +96,9 @@
     [super viewDidLoad];
     self.playerState = PlayerStateInit;
     
-    int rows;
-    int columns;
-    int numberOfMines;
+    int rows = 0;
+    int columns = 0;
+    int numberOfMines = 0;
     if([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad){ //iPad
         rows = 16;
         columns = 16;
@@ -116,7 +116,7 @@
     //TODO: 修改为delegate pattern，由view通过delegate查询data model
     self.playerBoardView.playerBoard = self.playerBoard;
     self.numberOfMinesToLayOnMineBoard = numberOfMines;
-    self.playerBoardView.delegate = self;
+    self.playerBoardView.listener = self;
 
     //defer lay mines until first user-tap action!
 //     [self.playerBoard.mineBoard layMines:numberOfMines];
@@ -125,6 +125,13 @@
     _numberOfMinesMarkedAsMine = 0;
     _numberOfMinesUncovered = 0;
 
+//    self.preferredFramesPerSecond = 30;
+}
+
+
+-(UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskAll;
 }
 
 -(BOOL)ensureMinesLaiedOnMineBoard:(int)row column:(int)column
@@ -219,7 +226,6 @@
     //start new game
     GameViewController *viewController = [[GameViewController alloc] init];
     [self showViewController:viewController sender:self];
-
 }
 
 @end
